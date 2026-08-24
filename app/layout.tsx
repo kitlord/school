@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Playfair_Display, Poppins } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
@@ -13,10 +13,23 @@ export const metadata: Metadata = {
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Body/UI face — mirrors the Poppins used across the reference theme's
+// nav, buttons, and copy.
+const bodyFont = Poppins({
+  variable: "--font-body",
   display: "swap",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+// Display face for headings only — mirrors the reference theme's Playfair
+// Display pairing. Applied via the `font-display` Tailwind utility, not on
+// <body>, so body copy stays on the Poppins/sans stack.
+const displayFont = Playfair_Display({
+  variable: "--font-display",
+  display: "swap",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 export default function RootLayout({
@@ -25,8 +38,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${bodyFont.variable} ${displayFont.variable}`}
+    >
+      <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

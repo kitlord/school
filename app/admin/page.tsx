@@ -25,7 +25,7 @@ async function UserRolesTable() {
   const adminRoleId = roles?.find((r) => r.name === "Admin")?.id;
   const viewerRoleId = roles?.find((r) => r.name === "Viewer")?.id;
 
-  if (myRole?.role_id !== adminRoleId) redirect("/protected");
+  if (myRole?.role_id !== adminRoleId) redirect("/dashboard");
 
   const [{ data: usersData }, { data: userRoles }] = await Promise.all([
     admin.auth.admin.listUsers(),

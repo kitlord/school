@@ -10,9 +10,10 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import { AttendanceList } from "@/components/attendance-list";
 
-// This page lives outside app/protected/, so unlike the teacher-only
-// attendance marking page it isn't gated by the Teacher/Admin role — any
-// signed-in user can look up a class's attendance here.
+// This page lives outside app/dashboard/, so unlike the teacher-only
+// attendance marking page (app/attendance/mark) it isn't gated by the
+// Teacher/Admin role — any signed-in user can look up a class's attendance
+// here.
 async function AttendanceListGate() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();

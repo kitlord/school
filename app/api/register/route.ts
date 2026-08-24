@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     email,
     password,
     options: {
-      emailRedirectTo: `${new URL(request.url).origin}/protected`,
+      emailRedirectTo: `${new URL(request.url).origin}/dashboard`,
     },
   });
 
