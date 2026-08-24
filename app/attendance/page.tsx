@@ -8,6 +8,7 @@ import { EnvVarWarning } from "@/components/env-var-warning";
 import { AuthButton } from "@/components/auth-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
+import { siteConfig } from "@/lib/site-config";
 import { AttendanceList } from "@/components/attendance-list";
 
 // This page lives outside app/dashboard/, so unlike the teacher-only
@@ -39,7 +40,7 @@ export default function AttendanceListPage() {
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
           <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
             <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
+              <Link href={"/"}>{siteConfig.name}</Link>
               <div className="flex items-center gap-2">
                 <DeployButton />
               </div>

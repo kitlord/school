@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Poppins } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { SiteProvider } from "@/components/site-provider";
+import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -9,8 +11,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: siteConfig.name,
+  description: siteConfig.description,
 };
 
 // Body/UI face — mirrors the Poppins used across the reference theme's
@@ -50,7 +52,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <SiteProvider>{children}</SiteProvider>
         </ThemeProvider>
       </body>
     </html>
