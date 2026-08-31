@@ -38,6 +38,7 @@ export const siteConfig = {
     body: "Serving Menaprem, Chokli since 1899 — small classes from LKG to Class 4, led by 8 teachers who know every student by name.",
     primaryCta: { label: "Enroll Now", href: "/auth/sign-up" },
     secondaryCta: { label: "Learn More", href: "#about" },
+    image: { src: "/school.jpeg", alt: "Navallur Muslim LP School's front gate" },
   },
 
   features: [
@@ -68,20 +69,35 @@ export const siteConfig = {
     heading: "Navallur Muslim LP School",
     body: "Established in 1899, Navallur Muslim LP School has taught children in Menaprem, Chokli for well over a century under the motto “Every child towards excellence.” Headmaster Rajeevan V P joined the school in 1990 and has led it since 2014, overseeing a close-knit team of 8 teachers across LKG to Class 4.",
     cta: { label: "Meet Our Teachers", href: "#teachers" },
-    imageCount: 4,
+    // One official class photo per grade, LKG through Class 4.
+    images: [
+      { src: "/lkg.jpeg", alt: "LKG class photo" },
+      { src: "/ukg.jpeg", alt: "UKG class photo" },
+      { src: "/class1.jpeg", alt: "Class 1 photo" },
+      { src: "/class2.jpeg", alt: "Class 2 photo" },
+      { src: "/class3.jpeg", alt: "Class 3 photo" },
+      { src: "/class4.jpeg", alt: "Class 4 photo" },
+    ],
   },
 
   gallery: {
     eyebrow: "Take a Look Around",
     heading: "Gallery",
     body: "A glimpse of daily life on campus — classrooms and the moments in between.",
-    imageCount: 6,
+    images: [
+      { src: "/assembly1.jpeg", alt: "Morning assembly" },
+      { src: "/assembly2.jpeg", alt: "Students and teachers doing exercises at assembly" },
+      { src: "/event1.jpeg", alt: "School event" },
+      { src: "/event2.jpeg", alt: "School event" },
+      { src: "/nature-event.jpeg", alt: "Students and staff planting a tree" },
+    ],
   },
 
   teachers: {
     eyebrow: "Our Staff",
     heading: "Meet Our Teachers",
     body: "Eight teachers cover every class and subject, from LKG through Class 4.",
+    groupPhoto: { src: "/faculties.jpeg", alt: "Teachers and staff group photo" },
     items: [
       {
         name: "Rajeevan V P",

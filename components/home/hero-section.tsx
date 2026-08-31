@@ -1,6 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PlaceholderImage } from "@/components/placeholder-image";
 import { useSite } from "@/components/site-provider";
 
 export function HeroSection() {
@@ -32,10 +32,16 @@ export function HeroSection() {
           </div>
         </div>
 
-        <PlaceholderImage
-          label="Campus photo"
-          className="aspect-[4/3] w-full rounded-lg"
-        />
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg">
+          <Image
+            src={hero.image.src}
+            alt={hero.image.alt}
+            fill
+            className="object-cover"
+            sizes="(min-width: 768px) 50vw, 100vw"
+            priority
+          />
+        </div>
       </div>
     </section>
   );

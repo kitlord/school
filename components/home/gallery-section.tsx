@@ -1,4 +1,4 @@
-import { PlaceholderImage } from "@/components/placeholder-image";
+import Image from "next/image";
 import { useSite } from "@/components/site-provider";
 
 export function GallerySection() {
@@ -17,12 +17,19 @@ export function GallerySection() {
         </div>
 
         <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
-          {Array.from({ length: gallery.imageCount }).map((_, i) => (
-            <PlaceholderImage
-              key={i}
-              label={`Photo ${i + 1}`}
-              className="aspect-[4/3] w-full rounded-md"
-            />
+          {gallery.images.map((image) => (
+            <div
+              key={image.src}
+              className="relative aspect-[4/3] w-full overflow-hidden rounded-md"
+            >
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                className="object-cover"
+                sizes="(min-width: 640px) 33vw, 50vw"
+              />
+            </div>
           ))}
         </div>
       </div>
