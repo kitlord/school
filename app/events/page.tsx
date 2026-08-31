@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -15,6 +16,8 @@ type Event = {
   id: number;
   title: string;
   description: string;
+  image_url: string | null;
+  video_url: string | null;
   created_at: string;
 };
 
@@ -28,7 +31,7 @@ async function EventList() {
   const admin = createAdminClient();
   const { data: events, error } = await admin
     .from("events")
-    .select("id, title, description, created_at")
+    .select("id, title, description, image_url, video_url, created_at")
     .order("created_at", { ascending: false })
     .returns<Event[]>();
 
@@ -58,6 +61,24 @@ async function EventList() {
           <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">
             {event.description}
           </p>
+          {event.image_url && (
+            <div className="relative mt-3 aspect-video w-full overflow-hidden rounded-md">
+              <Image
+                src={event.image_url}
+                alt={event.title}
+                fill
+                className="object-cover"
+                sizes="(min-width: 672px) 42rem, 100vw"
+              />
+            </div>
+          )}
+          {event.video_url && (
+            <video
+              src={event.video_url}
+              controls
+              className="mt-3 w-full rounded-md"
+            />
+          )}
         </div>
       ))}
     </div>
@@ -109,7 +130,7 @@ export default function EventsPage() {
             )}
           </div>
         </nav>
-        <div className="flex-1 flex flex-col gap-8 max-w-sm w-full p-5">
+        <div className="flex-1 flex flex-col gap-8 max-w-2xl w-full p-5">
           <h1 className="font-bold text-2xl">Events</h1>
           <Suspense
             fallback={<p className="text-sm text-muted-foreground">Loading…</p>}

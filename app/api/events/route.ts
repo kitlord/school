@@ -1,37 +1,18 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { getRoleIdsByName, hasRole } from "@/lib/supabase/roles";
+import { requireAdmin } from "./require-admin";
+
+const BUCKET = "events";
 
 // Serverless function (Vercel): lets an authenticated Admin post a new
-// event. The caller's role is looked up server-side via the service-role
-// client, so a request can't self-elevate by just claiming to be an admin.
+// event. Image/video, if any, are uploaded straight from the browser to
+// Storage beforehand (see ./upload-url) — this only ever receives their
+// storage paths, never the file bytes.
 export async function POST(request: Request) {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-  const user = data?.claims;
+  const auth = await requireAdmin();
+  if (auth.error) return auth.error;
+  const { admin } = auth;
 
-  if (!user) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  // Service role bypasses RLS to look up the caller's role and, once
-  // authorized, to write the new event row.
-  const admin = createAdminClient();
-  const [{ data: role }, { Admin: ADMIN_ROLE_ID }] = await Promise.all([
-    admin
-      .from("user_roles")
-      .select("role_id")
-      .eq("user_id", user.sub)
-      .maybeSingle(),
-    getRoleIdsByName(admin, ["Admin"]),
-  ]);
-
-  if (!hasRole(role?.role_id, ADMIN_ROLE_ID)) {
-    return NextResponse.json({ error: "Not authorized" }, { status: 403 });
-  }
-
-  const { title, description } = await request.json();
+  const { title, description, imagePath, videoPath } = await request.json();
 
   if (typeof title !== "string" || !title.trim()) {
     return NextResponse.json(
@@ -47,10 +28,29 @@ export async function POST(request: Request) {
     );
   }
 
+  if (imagePath !== undefined && typeof imagePath !== "string") {
+    return NextResponse.json({ error: "Invalid imagePath" }, { status: 400 });
+  }
+  if (videoPath !== undefined && typeof videoPath !== "string") {
+    return NextResponse.json({ error: "Invalid videoPath" }, { status: 400 });
+  }
+
+  const imageUrl = imagePath
+    ? admin.storage.from(BUCKET).getPublicUrl(imagePath).data.publicUrl
+    : null;
+  const videoUrl = videoPath
+    ? admin.storage.from(BUCKET).getPublicUrl(videoPath).data.publicUrl
+    : null;
+
   const { data: event, error } = await admin
     .from("events")
-    .insert({ title: title.trim(), description: description.trim() })
-    .select("id, title, description, created_at")
+    .insert({
+      title: title.trim(),
+      description: description.trim(),
+      image_url: imageUrl,
+      video_url: videoUrl,
+    })
+    .select("id, title, description, image_url, video_url, created_at")
     .single();
 
   if (error) {
