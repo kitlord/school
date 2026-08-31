@@ -11,6 +11,13 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import { siteConfig } from "@/lib/site-config";
 import { AddStudentForm } from "@/components/add-student-form";
+import { StudentsList } from "@/components/students-list";
+
+type StudentRow = {
+  roll: number;
+  name: string | null;
+  class: { name: string | null } | null;
+};
 
 // This page lives outside app/dashboard/, so it isn't wrapped by the
 // dashboard layout — it carries its own nav/footer (same pattern as
@@ -39,12 +46,26 @@ async function StudentsGate() {
     redirect("/dashboard");
   }
 
-  const { data: classes } = await admin
-    .from("classes")
-    .select("id, name")
-    .order("name");
+  const isAdmin = hasRole(role?.role_id, ADMIN_ROLE_ID);
 
-  return <AddStudentForm classes={classes ?? []} />;
+  const [{ data: classes }, { data: students }] = await Promise.all([
+    admin.from("classes").select("id, name").order("name"),
+    admin
+      .from("students")
+      .select("roll, name, class:classes(name)")
+      .order("roll")
+      .returns<StudentRow[]>(),
+  ]);
+
+  return (
+    <div className="flex flex-col gap-8">
+      <AddStudentForm classes={classes ?? []} />
+      <div className="flex flex-col gap-4">
+        <h2 className="font-semibold">Enrolled students</h2>
+        <StudentsList students={students ?? []} isAdmin={isAdmin} />
+      </div>
+    </div>
+  );
 }
 
 export default function StudentsPage() {

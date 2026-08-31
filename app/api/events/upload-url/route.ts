@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "../require-admin";
+import { requireAdmin } from "@/lib/supabase/require-admin";
 
 const BUCKET = "events";
 

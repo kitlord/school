@@ -10,7 +10,8 @@ import { AuthButton } from "@/components/auth-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import { siteConfig } from "@/lib/site-config";
-import { updateUserRole } from "./actions";
+import { DeleteUserButton } from "@/components/delete-user-button";
+import { updateUserRole, deleteUser } from "./actions";
 
 async function UserRolesTable() {
   const supabase = await createClient();
@@ -49,6 +50,7 @@ async function UserRolesTable() {
           <th className="p-2">Email</th>
           <th className="p-2">Role</th>
           <th className="p-2" />
+          <th className="p-2" />
         </tr>
       </thead>
       <tbody>
@@ -76,6 +78,13 @@ async function UserRolesTable() {
                   Save
                 </button>
               </form>
+            </td>
+            <td className="p-2 text-right">
+              <DeleteUserButton
+                userId={u.id}
+                email={u.email ?? "this user"}
+                action={deleteUser}
+              />
             </td>
           </tr>
         ))}
