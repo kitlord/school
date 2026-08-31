@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
+  CalendarDays,
   ClipboardCheck,
   ClipboardList,
   ShieldCheck,
@@ -76,6 +77,12 @@ async function DashboardContent() {
       title: "Attendance",
       description: "Look up a class's attendance for any date.",
       icon: ClipboardList,
+    },
+    {
+      href: "/events",
+      title: "Events",
+      description: "See what's coming up at school.",
+      icon: CalendarDays,
     },
     ...(isTeacherOrAdmin
       ? [
