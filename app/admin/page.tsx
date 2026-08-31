@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { hasRole } from "@/lib/supabase/roles";
 import { updateUserRole } from "./actions";
 
 async function UserRolesTable() {
@@ -25,7 +26,7 @@ async function UserRolesTable() {
   const adminRoleId = roles?.find((r) => r.name === "Admin")?.id;
   const viewerRoleId = roles?.find((r) => r.name === "Viewer")?.id;
 
-  if (myRole?.role_id !== adminRoleId) redirect("/dashboard");
+  if (!hasRole(myRole?.role_id, adminRoleId)) redirect("/dashboard");
 
   const [{ data: usersData }, { data: userRoles }] = await Promise.all([
     admin.auth.admin.listUsers(),

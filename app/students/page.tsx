@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getRoleIdsByName } from "@/lib/supabase/roles";
+import { getRoleIdsByName, hasRole } from "@/lib/supabase/roles";
 import { DeployButton } from "@/components/deploy-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import { AuthButton } from "@/components/auth-button";
@@ -35,7 +35,7 @@ async function StudentsGate() {
       getRoleIdsByName(admin, ["Teacher", "Admin"]),
     ]);
 
-  if (role?.role_id !== TEACHER_ROLE_ID && role?.role_id !== ADMIN_ROLE_ID) {
+  if (!hasRole(role?.role_id, TEACHER_ROLE_ID, ADMIN_ROLE_ID)) {
     redirect("/dashboard");
   }
 

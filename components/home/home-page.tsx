@@ -6,7 +6,7 @@ import { HeroSection } from "@/components/home/hero-section";
 import { FeaturesSection } from "@/components/home/features-section";
 import { AboutSection } from "@/components/home/about-section";
 import { GallerySection } from "@/components/home/gallery-section";
-import { CoursesSection } from "@/components/home/courses-section";
+import { TeachersSection } from "@/components/home/teachers-section";
 import { CtaSection } from "@/components/home/cta-section";
 import { SiteFooter } from "@/components/home/site-footer";
 
@@ -21,7 +21,7 @@ export function HomePage({ authSlot }: { authSlot: React.ReactNode }) {
       <FeaturesSection />
       <AboutSection />
       <GallerySection />
-      <CoursesSection />
+      <TeachersSection />
       <CtaSection />
       {/* SiteFooter reads the current year, so it needs its own Suspense
           boundary — otherwise Cache Components can't tell where the

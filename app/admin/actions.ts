@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getRoleIdsByName } from "@/lib/supabase/roles";
+import { getRoleIdsByName, hasRole } from "@/lib/supabase/roles";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -21,7 +21,7 @@ async function requireAdmin() {
     getRoleIdsByName(admin, ["Admin"]),
   ]);
 
-  if (role?.role_id !== ADMIN_ROLE_ID) throw new Error("Not authorized");
+  if (!hasRole(role?.role_id, ADMIN_ROLE_ID)) throw new Error("Not authorized");
 
   return admin;
 }

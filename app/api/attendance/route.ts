@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getRoleIdsByName } from "@/lib/supabase/roles";
+import { getRoleIdsByName, hasRole } from "@/lib/supabase/roles";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -43,7 +43,7 @@ async function authorizeTeacherOrAdmin() {
       getRoleIdsByName(admin, ["Teacher", "Admin"]),
     ]);
 
-  if (role?.role_id !== TEACHER_ROLE_ID && role?.role_id !== ADMIN_ROLE_ID) {
+  if (!hasRole(role?.role_id, TEACHER_ROLE_ID, ADMIN_ROLE_ID)) {
     return {
       error: NextResponse.json({ error: "Not authorized" }, { status: 403 }),
     };

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getRoleIdsByName } from "@/lib/supabase/roles";
+import { getRoleIdsByName, hasRole } from "@/lib/supabase/roles";
 
 // Serverless function (Vercel): lets an authenticated, authorized teacher
 // (or admin) add a new student. The caller's role is looked up server-side
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       getRoleIdsByName(admin, ["Teacher", "Admin"]),
     ]);
 
-  if (role?.role_id !== TEACHER_ROLE_ID && role?.role_id !== ADMIN_ROLE_ID) {
+  if (!hasRole(role?.role_id, TEACHER_ROLE_ID, ADMIN_ROLE_ID)) {
     return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   }
 

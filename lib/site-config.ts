@@ -8,35 +8,33 @@ import {
 
 /**
  * Single source of truth for every piece of school-specific text used
- * across the site — nav labels, hero copy, contact info, program list.
- *
- * `name` below is a placeholder. Swap it (and the rest of this file) for
- * the real school's details and every page that reads from here — the
- * home page, and the nav brand link on every other page — updates together.
+ * across the site — nav labels, hero copy, contact info, teacher list.
+ * Sourced from data.json (the school's actual details, as supplied by
+ * the school).
  *
  * Read this directly in Server Components (`import { siteConfig } from
  * "@/lib/site-config"`), or via `useSite()` (see site-provider.tsx) in
  * Client Components.
  */
 export const siteConfig = {
-  name: "Crestwood Academy",
-  shortName: "Crestwood",
-  initials: "CA",
+  name: "Navallur L.P",
+  shortName: "Navallur LPS",
+  initials: "NM",
   description:
-    "A K–12 school built on small classes, certified teachers, and a curriculum families can track in real time.",
+    "A government LP school in Menaprem, Chokli, Kannur, teaching LKG to Class 4 since 1899 under the motto “Every child towards excellence.”",
 
   nav: [
     { label: "Home", href: "#home" },
     { label: "About", href: "#about" },
-    { label: "Courses", href: "#courses" },
+    { label: "Teachers", href: "#teachers" },
     { label: "Gallery", href: "#gallery" },
     { label: "Contact", href: "#contact" },
   ],
 
   hero: {
-    eyebrow: "Welcome to Crestwood Academy",
-    headline: "Your Child's Best Year Starts Here.",
-    body: "Small classes, certified teachers, and a curriculum that grows with every student — from their first day to graduation.",
+    eyebrow: "Welcome to Navallur Muslim LP School",
+    headline: "Every Child Towards Excellence.",
+    body: "Serving Menaprem, Chokli since 1899 — small classes from LKG to Class 4, led by 8 teachers who know every student by name.",
     primaryCta: { label: "Enroll Now", href: "/auth/sign-up" },
     secondaryCta: { label: "Learn More", href: "#about" },
   },
@@ -44,72 +42,109 @@ export const siteConfig = {
   features: [
     {
       icon: Users,
-      title: "Certified Teachers",
-      body: "Every classroom is led by a licensed, background-checked teacher who knows each student by name.",
+      title: "8 Dedicated Teachers",
+      body: "One teacher per class from LKG to Class 4, plus dedicated Arabic and Work Experience teachers — everyone known by name.",
     },
     {
       icon: ClipboardList,
-      title: "Structured Curriculum",
-      body: "A clear, grade-by-grade curriculum that builds real skills year over year, not just test scores.",
+      title: "Full Curriculum",
+      body: "Arabic, Malayalam, English, EVS, Mathematics, Work Experience and Art Education, across 8 periods a day, Monday to Friday.",
     },
     {
       icon: GraduationCap,
-      title: "Accredited Certification",
-      body: "Graduates leave with certification recognized by colleges and employers alike.",
+      title: "Established 1899",
+      body: "More than a century educating children in Menaprem, Chokli — trusted across generations.",
     },
     {
       icon: Monitor,
-      title: "Online Access",
-      body: "Parents and students track attendance, grades, and schedules online, anytime.",
+      title: "Attendance Tracked Online",
+      body: "Every class's daily attendance is recorded and available for staff to view online, in real time.",
     },
   ] satisfies { icon: LucideIcon; title: string; body: string }[],
 
   about: {
     eyebrow: "About Us",
-    heading: "A School Built Around Every Student",
-    body: "Crestwood has spent over two decades helping students find their footing, academically and personally. Our teachers track attendance and progress closely, our classes stay small on purpose, and our campus is built for students to actually want to be here.",
-    cta: { label: "Explore Our Courses", href: "#courses" },
+    heading: "Navallur Muslim LP School",
+    body: "Established in 1899, Navallur Muslim LP School has taught children in Menaprem, Chokli for well over a century under the motto “Every child towards excellence.” Headmaster Rajeevan V P joined the school in 1990 and has led it since 2014, overseeing a close-knit team of 8 teachers across LKG to Class 4.",
+    cta: { label: "Meet Our Teachers", href: "#teachers" },
     imageCount: 4,
   },
 
   gallery: {
     eyebrow: "Take a Look Around",
     heading: "Gallery",
-    body: "A glimpse of daily life on campus — classrooms, labs, and the moments in between.",
+    body: "A glimpse of daily life on campus — classrooms and the moments in between.",
     imageCount: 6,
   },
 
-  courses: {
-    eyebrow: "What We Offer",
-    heading: "Courses",
-    body: "Six core programs, each built to take a student from first principles to real mastery.",
+  teachers: {
+    eyebrow: "Our Staff",
+    heading: "Meet Our Teachers",
+    body: "Eight teachers cover every class and subject, from LKG through Class 4.",
     items: [
-      { name: "Mathematics", duration: "4 Years", price: "$400 / yr" },
-      { name: "Natural Sciences", duration: "4 Years", price: "$450 / yr" },
-      { name: "Arts & Humanities", duration: "3 Years", price: "$380 / yr" },
-      { name: "Computer Science", duration: "4 Years", price: "$500 / yr" },
-      { name: "Business Studies", duration: "3 Years", price: "$420 / yr" },
-      { name: "Languages", duration: "2 Years", price: "$350 / yr" },
+      {
+        name: "Rajeevan V P",
+        role: "Class 2 · All Subjects",
+        designation: "HM",
+      },
+      {
+        name: "Abdul Rasheed P",
+        role: "LP Arabic",
+        designation: "Arabic Teacher",
+      },
+      {
+        name: "Rasina Kuttiyil",
+        role: "Class 3 · All Subjects",
+        designation: "LPST",
+      },
+      {
+        name: "Muhammed Naseeb K",
+        role: "Class 4 · All Subjects",
+        designation: "LPST",
+      },
+      {
+        name: "Ramsheeda P P",
+        role: "Class 1 · All Subjects",
+        designation: "LPST",
+      },
+      {
+        name: "Hema Latha K",
+        role: "Work Experience",
+        designation: "Needlework Teacher",
+      },
+      {
+        name: "Namisha K N",
+        role: "UKG · All Subjects",
+        designation: "PPT",
+      },
+      {
+        name: "Ramsheena P T K",
+        role: "LKG · All Subjects",
+        designation: "PPT",
+      },
     ],
   },
 
   cta: {
-    eyebrow: "Enrollment Is Open",
-    heading: "Ready to Get Started?",
-    body: "Applications for the next term are open now — spots are limited.",
-    action: { label: "Register Today", href: "/auth/sign-up" },
+    eyebrow: "Admissions",
+    heading: "Ready to Join Navallur Muslim LP School?",
+    body: "Classes run Monday to Friday, 10:00 AM – 4:00 PM, for LKG to Class 4. Reach out to learn more.",
+    action: { label: "Contact Us", href: "#contact" },
   },
 
   contact: {
     heading: "Contact",
-    address: "123 Example Avenue, Springfield, ST 00000",
-    phone: "(555) 010-0100",
-    email: "info@crestwood.example.edu",
+    address: "Menaprem PO, Chokli, Kannur District, Kerala",
+    phone: "9400432133",
+    phoneAlt: "9747092156",
+    whatsapp: "9747092156",
+    email: "navallurmlps@gmail.com",
+    hours: "Mon–Fri · 10:00 AM – 4:00 PM",
   },
 
   footer: {
     blurb:
-      "Crestwood Academy is a K–12 school focused on small classes, certified teachers, and real accountability, for students and parents alike.",
+      "Navallur Muslim LP School has taught children in Menaprem, Chokli since 1899, under the motto “Every child towards excellence.”",
   },
 };
 

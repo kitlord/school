@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { useSite } from "@/components/site-provider";
 
 export function SiteFooter() {
@@ -46,16 +46,16 @@ export function SiteFooter() {
 
         <div className="flex flex-col gap-3">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-heading">
-            Courses
+            Teachers
           </h3>
           <nav className="flex flex-col gap-2">
-            {site.courses.items.map((course) => (
+            {site.teachers.items.map((teacher) => (
               <a
-                key={course.name}
-                href="#courses"
+                key={teacher.name}
+                href="#teachers"
                 className="text-sm text-muted-foreground hover:text-primary"
               >
-                {course.name}
+                {teacher.name}
               </a>
             ))}
           </nav>
@@ -72,8 +72,27 @@ export function SiteFooter() {
             </div>
             <div className="flex items-center gap-2">
               <Phone className="size-4 shrink-0 text-primary" />
-              <a href={`tel:${site.contact.phone}`} className="hover:text-primary">
-                {site.contact.phone}
+              <span className="flex flex-col">
+                <a href={`tel:${site.contact.phone}`} className="hover:text-primary">
+                  {site.contact.phone}
+                </a>
+                <a
+                  href={`tel:${site.contact.phoneAlt}`}
+                  className="hover:text-primary"
+                >
+                  {site.contact.phoneAlt}
+                </a>
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MessageCircle className="size-4 shrink-0 text-primary" />
+              <a
+                href={`https://wa.me/91${site.contact.whatsapp}`}
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-primary"
+              >
+                WhatsApp
               </a>
             </div>
             <div className="flex items-center gap-2">
@@ -84,6 +103,10 @@ export function SiteFooter() {
               >
                 {site.contact.email}
               </a>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="size-4 shrink-0 text-primary" />
+              <span>{site.contact.hours}</span>
             </div>
           </div>
         </div>

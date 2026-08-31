@@ -1,0 +1,123 @@
+{
+  "school_information": {
+    "official_full_name": "NAVALLUR MUSLIM LP SCHOOL",
+    "year_of_establishment": 1899,
+    "motto": "EVERY CHILD TOWARDS EXCELLENCE",
+    "address": "MENAPREM PO.CHOKLI ,KANNUR DISTRICT KERALA",
+    "phone_numbers": [
+      "9400432133",
+      "9747092156"
+    ],
+    "email_address": "navallurmlps@gmail.com",
+    "whatsapp_number": "9747092156",
+    "school_timing": "10 to 4",
+    "academic_structure": {
+      "classes": "LKG to Class 4",
+      "sections_per_class": "one",
+      "periods_per_day": 8,
+      "working_days": "Mon–Fri"
+    },
+    "headmaster": {
+      "name": "RAJEEVAN VP",
+      "joined_service_date": "01/06/1990",
+      "became_headmaster_date": "01/04/2014"
+    }
+  },
+  "teachers_data": [
+    {
+      "sl_no": 1,
+      "name": "RAJEEVAN V P",
+      "class_subject": "Class 2 All Subject",
+      "designation": "HM"
+    },
+    {
+      "sl_no": 2,
+      "name": "ABDUL RASHEED.P",
+      "class_subject": "LP Arabic",
+      "designation": "Arabic Teacher"
+    },
+    {
+      "sl_no": 3,
+      "name": "RASINA KUTTIYIL",
+      "class_subject": "Class 3 All Subject",
+      "designation": "LPST"
+    },
+    {
+      "sl_no": 4,
+      "name": "MUHAMMED NASEEB K",
+      "class_subject": "Class 4 All Subject",
+      "designation": "LPST"
+    },
+    {
+      "sl_no": 5,
+      "name": "RAMSHEEDA PP",
+      "class_subject": "Class 1 All Subject",
+      "designation": "LPST"
+    },
+    {
+      "sl_no": 6,
+      "name": "HEMA LATHA K",
+      "class_subject": "Work Experience",
+      "designation": "Needle work Teacher"
+    },
+    {
+      "sl_no": 7,
+      "name": "NAMISHA KN",
+      "class_subject": "UKG All subjects",
+      "designation": "PPT"
+    },
+    {
+      "sl_no": 8,
+      "name": "RAMSHEENA PTK",
+      "class_subject": "LKGAll subjects",
+      "designation": "PPT"
+    }
+  ],
+  "timetable_2023_2024": {
+    "schedule_slots": [
+      { "period": 1, "time": "10.00 – 10.40" },
+      { "period": 2, "time": "10.40 – 11.20" },
+      { "type": "INTERVAL", "time": "11.20 - 11.30" },
+      { "period": 3, "time": "11.30 – 12.10" },
+      { "period": 4, "time": "12.10 – 12.45" },
+      { "type": "LUNCH BREAK", "time": "12.45 – 1.45" },
+      { "period": 5, "time": "1.45 – 2.20" },
+      { "period": 6, "time": "2.20 – 2.55" },
+      { "type": "INTERVAL", "time": "2.55 - 3.00" },
+      { "period": 7, "time": "3.00 – 3.30" },
+      { "period": 8, "time": "3.30 – 4.00" }
+    ],
+    "days": {
+      "MONDAY": {
+        "Class_I": ["Integration", "Arabic", "Work Experience", "Mathematics", "English", "Integration", "Health & PE", "Integration"],
+        "Class_II": ["Work Experience", "Integration", "Mathematics", "Integration", "English", "Integration", "Integration", "Health & PE"],
+        "Class_III": ["Malayalam", "Mathematics", "Arabic", "Work Experience", "English", "EVS", "Malayalam", "Art Education"],
+        "Class_IV": ["Malayalam", "Mathematics", "English", "EVS", "Work Experience", "Malayalam", "Health & PE", "Art Education"]
+      },
+      "TUESDAY": {
+        "Class_I": ["Integration", "Arabic", "Mathematics", "Mathematics", "English", "Integration", "Work Experience", "Integration"],
+        "Class_II": ["Arabic", "Integration", "Mathematics", "Mathematics", "English", "Integration", "Work Experience", "Art Education"],
+        "Class_III": ["Malayalam", "Mathematics", "Arabic", "English", "EVS", "Mathematics", "Malayalam", "Health & PE"],
+        "Class_IV": ["Malayalam", "Mathematics", "English", "EVS", "Arabic", "Mathematics", "Malayalam", "Health & PE"]
+      },
+      "WEDNESDAY": {
+        "Class_I": ["Integration", "Arabic", "Mathematics", "Art Education", "English", "Integration", "Work Experience", "Integration"],
+        "Class_II": ["Arabic", "Integration", "Mathematics", "Arabic", "English", "Integration", "Art Education", "Health & PE"],
+        "Class_III": ["Malayalam", "Mathematics", "Arabic", "English", "EVS", "Malayalam", "Work Experience", "Art Education"],
+        "Class_IV": ["Malayalam", "Mathematics", "English", "EVS", "Arabic", "Malayalam", "Work Experience", "Art Education"]
+      },
+      "THURSDAY": {
+        "Class_I": ["Integration", "Arabic", "Mathematics", "Art Education", "English", "Integration", "Art Education", "Integration"],
+        "Class_II": ["Arabic", "Integration", "Mathematics", "Integration", "English", "Integration", "Work Experience", "Health & PE"],
+        "Class_III": ["Malayalam", "Mathematics", "English", "EVS", "Work Experience", "EVS", "Malayalam", "Art Education"],
+        "Class_IV": ["Malayalam", "Mathematics", "English", "EVS", "Arabic", "EVS", "Malayalam", "Work Experience"]
+      },
+      "FRIDAY": {
+        "Class_I": ["Integration", "Integration", "Mathematics", "Art Education", "English", "Integration", "Health & PE", "kÀKthf"],
+        "Class_II": ["Arabic", "Integration", "Mathematics", "Integration", "English", "Integration", "Art Education", "kÀKthf"],
+        "Class_III": ["Malayalam", "Mathematics", "Arabic", "English", "EVS", "Malayalam", "Health & PE", "kÀKthf"],
+        "Class_IV": ["Malayalam", "Mathematics", "English", "EVS", "Arabic", "Malayalam", "Art Education", "kÀKthf"]
+      }
+    }
+  }
+}
