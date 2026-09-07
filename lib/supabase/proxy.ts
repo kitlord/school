@@ -53,9 +53,14 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/api") &&
-    // Events is a public page — signed-out visitors can view it, only
-    // posting is gated (checked in the page itself).
-    !request.nextUrl.pathname.startsWith("/events")
+    // Events, Attendance, and Timetable are public pages — signed-out
+    // visitors can view them. Any privileged action within them (posting
+    // an event, marking attendance at /attendance/mark, issuing a
+    // timetable) is still gated separately in that page/route itself, so
+    // letting the request through the proxy here doesn't relax those.
+    !request.nextUrl.pathname.startsWith("/events") &&
+    !request.nextUrl.pathname.startsWith("/attendance") &&
+    !request.nextUrl.pathname.startsWith("/timetable")
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
