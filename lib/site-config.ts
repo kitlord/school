@@ -7,7 +7,7 @@ import { parse as parseJsonc } from "jsonc-parser";
  * across the site — nav labels, hero copy, contact info, teacher list.
  * All of it lives in school.config.jsonc at the repo root: to point this
  * site at a different school, edit that file (and swap the images it
- * references under public/, plus app/icon.jpeg, app/opengraph-image.png
+ * references under public/, plus app/icon.png, app/opengraph-image.png
  * and app/twitter-image.png, which Next.js picks up by filename and so
  * can't be driven from JSON) — no code changes needed.
  *
