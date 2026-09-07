@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { useSite } from "@/components/site-provider";
+import { useStaff } from "@/components/home/use-staff";
 
 export function TeachersSection() {
   const { teachers } = useSite();
+  const { staff, isLoading } = useStaff();
 
   return (
     <section id="teachers" className="w-full">
@@ -26,24 +28,34 @@ export function TeachersSection() {
           />
         </div>
 
-        <div className="grid w-full grid-cols-1 gap-px overflow-hidden rounded-lg bg-border sm:grid-cols-2 lg:grid-cols-3">
-          {teachers.items.map((teacher) => (
-            <div
-              key={teacher.name}
-              className="flex flex-col items-start gap-6 bg-secondary p-8 text-left text-secondary-foreground"
-            >
-              <span className="text-xs font-semibold uppercase tracking-wide text-primary">
-                {teacher.designation}
-              </span>
-              <h3 className="font-display text-2xl text-secondary-foreground">
-                {teacher.name}
-              </h3>
-              <span className="text-sm text-secondary-foreground/70">
-                {teacher.role}
-              </span>
-            </div>
-          ))}
-        </div>
+        {!isLoading && staff.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            We&apos;re getting our staff details ready — check back soon!
+          </p>
+        ) : (
+          <div className="grid w-full grid-cols-1 gap-px overflow-hidden rounded-lg bg-border sm:grid-cols-2 lg:grid-cols-3">
+            {staff.map((member) => (
+              <div
+                key={member.id}
+                className="flex flex-col items-start gap-6 bg-secondary p-8 text-left text-secondary-foreground"
+              >
+                {member.designation && (
+                  <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+                    {member.designation}
+                  </span>
+                )}
+                <h3 className="font-display text-2xl text-secondary-foreground">
+                  {member.name}
+                </h3>
+                {member.role && (
+                  <span className="text-sm text-secondary-foreground/70">
+                    {member.role}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -7,6 +7,7 @@ type Student = {
   roll: number;
   name: string | null;
   class: { name: string | null } | null;
+  section: { name: string | null } | null;
 };
 
 export function StudentsList({
@@ -64,7 +65,12 @@ export function StudentsList({
             <span>
               {student.name}{" "}
               <span className="text-muted-foreground">
-                · {student.class?.name ?? "No class"}
+                ·{" "}
+                {student.class?.name
+                  ? student.section?.name
+                    ? `${student.class.name} - ${student.section.name}`
+                    : student.class.name
+                  : "No class"}
               </span>
             </span>
             {isAdmin && (

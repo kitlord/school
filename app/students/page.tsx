@@ -17,6 +17,7 @@ type StudentRow = {
   roll: number;
   name: string | null;
   class: { name: string | null } | null;
+  section: { name: string | null } | null;
 };
 
 // This page lives outside app/dashboard/, so it isn't wrapped by the
@@ -48,18 +49,23 @@ async function StudentsGate() {
 
   const isAdmin = hasRole(role?.role_id, ADMIN_ROLE_ID);
 
-  const [{ data: classes }, { data: students }] = await Promise.all([
-    admin.from("classes").select("id, name").order("name"),
-    admin
-      .from("students")
-      .select("roll, name, class:classes(name)")
-      .order("roll")
-      .returns<StudentRow[]>(),
-  ]);
+  const [{ data: classes }, { data: sections }, { data: students }] =
+    await Promise.all([
+      admin.from("classes").select("id, name").order("name"),
+      admin
+        .from("sections")
+        .select("id, name, class_id")
+        .order("name"),
+      admin
+        .from("students")
+        .select("roll, name, class:classes(name), section:sections(name)")
+        .order("roll")
+        .returns<StudentRow[]>(),
+    ]);
 
   return (
     <div className="flex flex-col gap-8">
-      <AddStudentForm classes={classes ?? []} />
+      <AddStudentForm classes={classes ?? []} sections={sections ?? []} />
       <div className="flex flex-col gap-4">
         <h2 className="font-semibold">Enrolled students</h2>
         <StudentsList students={students ?? []} isAdmin={isAdmin} />

@@ -10,9 +10,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type SchoolClass = { id: number; name: string | null };
+type SchoolSection = { id: number; name: string | null; class_id: number };
 type RosterRow = { roll: number; name: string | null; present: boolean | null };
 
 function today() {
@@ -26,23 +27,40 @@ function statusLabel(present: boolean | null) {
 
 export function AttendanceList({
   classes,
+  sections,
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div"> & { classes: SchoolClass[] }) {
+}: React.ComponentPropsWithoutRef<"div"> & {
+  classes: SchoolClass[];
+  sections: SchoolSection[];
+}) {
   const [classId, setClassId] = useState(classes[0]?.id.toString() ?? "");
+  // Left blank ("All sections") by default — unlike marking attendance,
+  // viewing works fine across a whole class even when it has sections.
+  const [sectionId, setSectionId] = useState("");
   const [date, setDate] = useState(today);
   const [roster, setRoster] = useState<RosterRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const sectionsForClass = useMemo(
+    () => sections.filter((s) => s.class_id === Number(classId)),
+    [sections, classId],
+  );
+
+  // Reset to "All sections" whenever the class changes.
+  useEffect(() => {
+    setSectionId("");
+  }, [classId]);
 
   const loadRoster = useCallback(async () => {
     if (!classId || !date) return;
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        `/api/attendance?classId=${classId}&date=${date}`,
-      );
+      const params = new URLSearchParams({ classId, date });
+      if (sectionId) params.set("sectionId", sectionId);
+      const response = await fetch(`/api/attendance?${params}`);
       const result = await response.json();
       if (!response.ok) throw new Error(result.error ?? "An error occurred");
       setRoster(result.students);
@@ -51,7 +69,7 @@ export function AttendanceList({
     } finally {
       setIsLoading(false);
     }
-  }, [classId, date]);
+  }, [classId, sectionId, date]);
 
   // Reload the roster whenever the class or date changes, and once up front.
   useEffect(() => {
@@ -93,6 +111,24 @@ export function AttendanceList({
                 ))}
               </select>
             </div>
+            {sectionsForClass.length > 0 && (
+              <div className="grid gap-2">
+                <Label htmlFor="sectionId">Section</Label>
+                <select
+                  id="sectionId"
+                  value={sectionId}
+                  onChange={(e) => setSectionId(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+                >
+                  <option value="">All sections</option>
+                  {sectionsForClass.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="grid gap-2">
               <Label htmlFor="date">Date</Label>
               <Input

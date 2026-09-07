@@ -40,12 +40,14 @@ async function MarkAttendanceGate() {
     redirect("/dashboard");
   }
 
-  const { data: classes } = await admin
-    .from("classes")
-    .select("id, name")
-    .order("name");
+  const [{ data: classes }, { data: sections }] = await Promise.all([
+    admin.from("classes").select("id, name").order("name"),
+    admin.from("sections").select("id, name, class_id").order("name"),
+  ]);
 
-  return <MarkAttendanceForm classes={classes ?? []} />;
+  return (
+    <MarkAttendanceForm classes={classes ?? []} sections={sections ?? []} />
+  );
 }
 
 export default function MarkAttendancePage() {

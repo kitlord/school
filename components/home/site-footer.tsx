@@ -1,9 +1,13 @@
 import Link from "next/link";
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { useSite } from "@/components/site-provider";
+import { useStaff } from "@/components/home/use-staff";
+import { useContactInfo } from "@/components/home/use-contact-info";
 
 export function SiteFooter() {
   const site = useSite();
+  const { staff } = useStaff();
+  const { contact } = useContactInfo();
   const year = new Date().getFullYear();
 
   return (
@@ -49,15 +53,24 @@ export function SiteFooter() {
             Teachers
           </h3>
           <nav className="flex flex-col gap-2">
-            {site.teachers.items.map((teacher) => (
+            {staff.length === 0 ? (
               <a
-                key={teacher.name}
                 href="#teachers"
                 className="text-sm text-muted-foreground hover:text-primary"
               >
-                {teacher.name}
+                Meet our teachers
               </a>
-            ))}
+            ) : (
+              staff.map((member) => (
+                <a
+                  key={member.id}
+                  href="#teachers"
+                  className="text-sm text-muted-foreground hover:text-primary"
+                >
+                  {member.name}
+                </a>
+              ))
+            )}
           </nav>
         </div>
 
@@ -65,50 +78,71 @@ export function SiteFooter() {
           <h3 className="text-sm font-semibold uppercase tracking-wide text-heading">
             {site.contact.heading}
           </h3>
-          <div className="flex flex-col gap-3 text-sm text-muted-foreground">
-            <div className="flex items-start gap-2">
-              <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
-              <span>{site.contact.address}</span>
+          {!contact ||
+          Object.values(contact).every((value) => !value) ? (
+            <p className="text-sm text-muted-foreground">
+              We&apos;re getting our contact details ready — check back soon!
+            </p>
+          ) : (
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+              {contact.address && (
+                <div className="flex items-start gap-2">
+                  <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
+                  <span>{contact.address}</span>
+                </div>
+              )}
+              {(contact.phone || contact.phoneAlt) && (
+                <div className="flex items-center gap-2">
+                  <Phone className="size-4 shrink-0 text-primary" />
+                  <span className="flex flex-col">
+                    {contact.phone && (
+                      <a href={`tel:${contact.phone}`} className="hover:text-primary">
+                        {contact.phone}
+                      </a>
+                    )}
+                    {contact.phoneAlt && (
+                      <a
+                        href={`tel:${contact.phoneAlt}`}
+                        className="hover:text-primary"
+                      >
+                        {contact.phoneAlt}
+                      </a>
+                    )}
+                  </span>
+                </div>
+              )}
+              {contact.whatsapp && (
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="size-4 shrink-0 text-primary" />
+                  <a
+                    href={`https://wa.me/${contact.whatsappCountryCode ?? ""}${contact.whatsapp}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-primary"
+                  >
+                    WhatsApp
+                  </a>
+                </div>
+              )}
+              {contact.email && (
+                <div className="flex items-center gap-2">
+                  <Mail className="size-4 shrink-0 text-primary" />
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="hover:text-primary"
+                  >
+                    {contact.email}
+                  </a>
+                </div>
+              )}
+              {contact.hours && (
+                <div className="flex items-center gap-2">
+                  <Clock className="size-4 shrink-0 text-primary" />
+                  <span>{contact.hours}</span>
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Phone className="size-4 shrink-0 text-primary" />
-              <span className="flex flex-col">
-                <a href={`tel:${site.contact.phone}`} className="hover:text-primary">
-                  {site.contact.phone}
-                </a>
-                <a
-                  href={`tel:${site.contact.phoneAlt}`}
-                  className="hover:text-primary"
-                >
-                  {site.contact.phoneAlt}
-                </a>
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MessageCircle className="size-4 shrink-0 text-primary" />
-              <a
-                href={`https://wa.me/91${site.contact.whatsapp}`}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-primary"
-              >
-                WhatsApp
-              </a>
-            </div>
-            <div className="flex items-center gap-2">
-              <Mail className="size-4 shrink-0 text-primary" />
-              <a
-                href={`mailto:${site.contact.email}`}
-                className="hover:text-primary"
-              >
-                {site.contact.email}
-              </a>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="size-4 shrink-0 text-primary" />
-              <span>{site.contact.hours}</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

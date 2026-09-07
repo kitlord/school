@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type SchoolClass = { id: number; name: string | null };
+type SchoolSection = { id: number; name: string | null; class_id: number };
 type RosterRow = { roll: number; name: string | null; present: boolean | null };
 
 function today() {
@@ -22,10 +23,15 @@ function today() {
 
 export function MarkAttendanceForm({
   classes,
+  sections,
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div"> & { classes: SchoolClass[] }) {
+}: React.ComponentPropsWithoutRef<"div"> & {
+  classes: SchoolClass[];
+  sections: SchoolSection[];
+}) {
   const [classId, setClassId] = useState(classes[0]?.id.toString() ?? "");
+  const [sectionId, setSectionId] = useState("");
   const [date, setDate] = useState(today);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -39,14 +45,34 @@ export function MarkAttendanceForm({
   // to present; the teacher unchecks whoever is absent.
   const [marks, setMarks] = useState<Record<number, boolean>>({});
 
+  // Sections are scoped to a class. A class with multiple sections mixes
+  // every section's students into one roll list, so once a class has any
+  // sections, picking one is required before attendance can be marked —
+  // a class with none (e.g. LKG/UKG) works exactly as before.
+  const sectionsForClass = useMemo(
+    () => sections.filter((s) => s.class_id === Number(classId)),
+    [sections, classId],
+  );
+  const sectionRequired = sectionsForClass.length > 0;
+
+  // Reset the section whenever the class changes, defaulting to that
+  // class's first section when it has any.
+  useEffect(() => {
+    setSectionId(sectionsForClass[0]?.id.toString() ?? "");
+  }, [sectionsForClass]);
+
   const loadRoster = useCallback(async () => {
     if (!classId || !date) return;
+    if (sectionRequired && !sectionId) {
+      setRoster([]);
+      return;
+    }
     setIsRosterLoading(true);
     setRosterError(null);
     try {
-      const response = await fetch(
-        `/api/attendance?classId=${classId}&date=${date}`,
-      );
+      const params = new URLSearchParams({ classId, date });
+      if (sectionId) params.set("sectionId", sectionId);
+      const response = await fetch(`/api/attendance?${params}`);
       const result = await response.json();
       if (!response.ok) throw new Error(result.error ?? "An error occurred");
       const students = result.students as RosterRow[];
@@ -61,7 +87,7 @@ export function MarkAttendanceForm({
     } finally {
       setIsRosterLoading(false);
     }
-  }, [classId, date]);
+  }, [classId, sectionId, sectionRequired, date]);
 
   // Reload the roster whenever the class or date changes, and once up front.
   useEffect(() => {
@@ -139,6 +165,27 @@ export function MarkAttendanceForm({
                   ))}
                 </select>
               </div>
+              {sectionRequired && (
+                <div className="grid gap-2">
+                  <Label htmlFor="sectionId">Section</Label>
+                  <select
+                    id="sectionId"
+                    required
+                    value={sectionId}
+                    onChange={(e) => setSectionId(e.target.value)}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+                  >
+                    <option value="" disabled>
+                      Select a section
+                    </option>
+                    {sectionsForClass.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div className="grid gap-2">
                 <Label htmlFor="date">Date</Label>
                 <Input
@@ -153,7 +200,18 @@ export function MarkAttendanceForm({
               {rosterError && (
                 <p className="text-sm text-red-500">{rosterError}</p>
               )}
-              {!rosterError && !isRosterLoading && roster.length === 0 && (
+              {!rosterError &&
+                !isRosterLoading &&
+                sectionRequired &&
+                !sectionId && (
+                  <p className="text-sm text-muted-foreground">
+                    Select a section to load its roster.
+                  </p>
+                )}
+              {!rosterError &&
+                !isRosterLoading &&
+                (!sectionRequired || sectionId) &&
+                roster.length === 0 && (
                 <p className="text-sm text-muted-foreground">
                   No students in this class.
                 </p>

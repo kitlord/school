@@ -5,11 +5,10 @@ import { getRoleIdsByName, hasRole } from "@/lib/supabase/roles";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
-// Shared by GET and POST below: confirms the caller is signed in, returning
-// the service-role client to use for the rest of the request. Returns an
-// `error` response instead if the caller isn't authenticated. Reading
-// attendance only requires being signed in (any role); marking it requires
-// Teacher/Admin, checked separately by authorizeTeacherOrAdmin below.
+// Used by authorizeTeacherOrAdmin below (marking attendance requires
+// Teacher/Admin). Reading attendance (GET below) is fully public and
+// doesn't call this at all — anyone can look up a class/section's roster
+// for a date, same as /api/timetable.
 async function authorizeUser() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
@@ -52,22 +51,32 @@ async function authorizeTeacherOrAdmin() {
   return { admin };
 }
 
-// Serverless function (Vercel): lets any signed-in user fetch a class's
-// attendance roster for a date — every student in the class, with their
-// present/absent mark for that date, or null if not yet marked.
+// Serverless function (Vercel): returns a class's (or one section's)
+// attendance roster for a date — every student, with their present/absent
+// mark, or null if not yet marked. Fully public, no sign-in required, same
+// as /api/timetable — see app/attendance/page.tsx.
 export async function GET(request: Request) {
-  const auth = await authorizeUser();
-  if (auth.error) return auth.error;
-  const { admin } = auth;
+  const admin = createAdminClient();
 
   const { searchParams } = new URL(request.url);
   const classIdParam = searchParams.get("classId");
   const classId = classIdParam !== null ? Number(classIdParam) : NaN;
   const date = searchParams.get("date") ?? new Date().toISOString().slice(0, 10);
+  // Optional: narrows the roster to one section of the class. A class with
+  // multiple sections would otherwise mix every section's students into one
+  // list, since roll numbers aren't scoped to a section.
+  const sectionIdParam = searchParams.get("sectionId");
+  const sectionId = sectionIdParam !== null ? Number(sectionIdParam) : null;
 
   if (!Number.isInteger(classId)) {
     return NextResponse.json(
       { error: "A valid classId is required" },
+      { status: 400 },
+    );
+  }
+  if (sectionId !== null && !Number.isInteger(sectionId)) {
+    return NextResponse.json(
+      { error: "sectionId must be a valid id" },
       { status: 400 },
     );
   }
@@ -78,11 +87,20 @@ export async function GET(request: Request) {
     );
   }
 
+  let studentsQuery = admin
+    .from("students")
+    .select("roll, name")
+    .eq("class", classId)
+    .order("roll");
+  if (sectionId !== null) {
+    studentsQuery = studentsQuery.eq("section_id", sectionId);
+  }
+
   const [
     { data: students, error: studentsError },
     { data: marks, error: marksError },
   ] = await Promise.all([
-    admin.from("students").select("roll, name").eq("class", classId).order("roll"),
+    studentsQuery,
     admin.from("attendance").select("roll, present").eq("class", classId).eq("date", date),
   ]);
 

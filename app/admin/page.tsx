@@ -11,6 +11,8 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import { siteConfig } from "@/lib/site-config";
 import { DeleteUserButton } from "@/components/delete-user-button";
+import { EditUserNameField } from "@/components/edit-user-name-field";
+import { ContactInfoForm } from "@/components/contact-info-form";
 import { updateUserRole, deleteUser } from "./actions";
 
 async function UserRolesTable() {
@@ -48,6 +50,7 @@ async function UserRolesTable() {
       <thead>
         <tr className="text-left border-b">
           <th className="p-2">Email</th>
+          <th className="p-2">Name</th>
           <th className="p-2">Role</th>
           <th className="p-2" />
           <th className="p-2" />
@@ -57,6 +60,15 @@ async function UserRolesTable() {
         {usersData.users.map((u) => (
           <tr key={u.id} className="border-b">
             <td className="p-2">{u.email}</td>
+            <td className="p-2">
+              <EditUserNameField
+                userId={u.id}
+                initialName={
+                  (u.user_metadata as { full_name?: string } | null)
+                    ?.full_name ?? ""
+                }
+              />
+            </td>
             <td className="p-2">
               <form
                 action={updateUserRole}
@@ -117,13 +129,27 @@ export default function AdminPanel() {
             )}
           </div>
         </nav>
-        <div className="flex-1 flex flex-col gap-8 max-w-5xl w-full p-5">
-          <h1 className="font-bold text-2xl">User Roles</h1>
-          <Suspense
-            fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
-          >
-            <UserRolesTable />
-          </Suspense>
+        <div className="flex-1 flex flex-col gap-12 max-w-5xl w-full p-5">
+          <div className="flex flex-col gap-8">
+            <h1 className="font-bold text-2xl">User Roles</h1>
+            {/* The home page's "Headmaster: ..." line (see
+                components/home/about-section.tsx, GET /api/headmaster) is
+                whichever Admin here joined first — set a Name below to
+                have it show up there instead of that person's email. */}
+            <Suspense
+              fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
+            >
+              <UserRolesTable />
+            </Suspense>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h2 className="font-bold text-2xl">Contact Info</h2>
+            <p className="text-sm text-muted-foreground">
+              Shown in the site footer. Leave a field blank to hide it there.
+            </p>
+            <ContactInfoForm />
+          </div>
         </div>
 
         <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">

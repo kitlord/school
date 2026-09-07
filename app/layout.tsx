@@ -52,7 +52,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SiteProvider>{children}</SiteProvider>
+          <SiteProvider site={siteConfig}>{children}</SiteProvider>
         </ThemeProvider>
       </body>
     </html>

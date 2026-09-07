@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   }
 
-  const { name, classId } = await request.json();
+  const { name, classId, sectionId } = await request.json();
 
   if (typeof name !== "string" || !name.trim()) {
     return NextResponse.json(
@@ -49,10 +49,51 @@ export async function POST(request: Request) {
     );
   }
 
+  if (
+    sectionId !== undefined &&
+    sectionId !== null &&
+    (typeof sectionId !== "number" || !Number.isInteger(sectionId))
+  ) {
+    return NextResponse.json(
+      { error: "sectionId must be a valid id" },
+      { status: 400 },
+    );
+  }
+
+  // A class may have multiple sections (e.g. "CLASS 1" -> "A", "B"). Once a
+  // class has any sections defined, a student must be placed in one of
+  // them; classes with no sections (e.g. LKG/UKG) keep working unchanged.
+  const { data: sections, error: sectionsError } = await admin
+    .from("sections")
+    .select("id")
+    .eq("class_id", classId);
+
+  if (sectionsError) {
+    return NextResponse.json({ error: sectionsError.message }, { status: 500 });
+  }
+
+  if (sections.length > 0 && (sectionId === undefined || sectionId === null)) {
+    return NextResponse.json(
+      { error: "A section is required for this class" },
+      { status: 400 },
+    );
+  }
+
+  if (
+    sectionId !== undefined &&
+    sectionId !== null &&
+    !sections.some((s) => s.id === sectionId)
+  ) {
+    return NextResponse.json(
+      { error: "Section not found in that class" },
+      { status: 400 },
+    );
+  }
+
   const { data: student, error } = await admin
     .from("students")
-    .insert({ name: name.trim(), class: classId })
-    .select("roll, name, class")
+    .insert({ name: name.trim(), class: classId, section_id: sectionId ?? null })
+    .select("roll, name, class, section:sections(name)")
     .single();
 
   if (error) {

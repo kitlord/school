@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
+  CalendarClock,
   CalendarDays,
   ClipboardCheck,
   ClipboardList,
@@ -28,9 +29,11 @@ type QuickLink = {
 };
 
 // Landing page after sign-in. It's role-aware: everyone gets a link to view
-// attendance, Teacher/Admin also get Students and Mark attendance, and Admin
-// alone gets User roles. This is the only place in the app that links out to
-// those pages, so a signed-in user can actually discover them.
+// attendance (also public via the site nav, but linked here too for
+// signed-in convenience), Teacher/Admin also get Students and Mark
+// attendance, and Admin alone gets User roles. Other than Attendance and
+// Events (also public), this is the only place in the app that links out
+// to those pages, so a signed-in user can actually discover them.
 async function DashboardContent() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
@@ -83,6 +86,12 @@ async function DashboardContent() {
       title: "Events",
       description: "See what's coming up at school.",
       icon: CalendarDays,
+    },
+    {
+      href: "/timetable",
+      title: "Timetable",
+      description: "View a class or section's weekly schedule.",
+      icon: CalendarClock,
     },
     ...(isTeacherOrAdmin
       ? [

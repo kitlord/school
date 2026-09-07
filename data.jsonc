@@ -1,3 +1,9 @@
+// Historical school data (2023–2024): teacher roster, contact/academic
+// info, and the last static timetable. Not imported by any code — kept for
+// reference now that this data lives elsewhere in the app:
+//   - school_information / teachers_data -> school.config.json
+//   - timetable_2023_2024               -> the timetable_entries table,
+//                                          issued via the Admin UI at /timetable
 {
   "school_information": {
     "official_full_name": "NAVALLUR MUSLIM LP SCHOOL",
@@ -73,6 +79,7 @@
       "designation": "PPT"
     }
   ],
+  // Superseded by the timetable_entries table — see /timetable.
   "timetable_2023_2024": {
     "schedule_slots": [
       { "period": 1, "time": "10.00 – 10.40" },

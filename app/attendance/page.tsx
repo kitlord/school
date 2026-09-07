@@ -1,7 +1,5 @@
 import { Suspense } from "react";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { DeployButton } from "@/components/deploy-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
@@ -11,26 +9,20 @@ import { hasEnvVars } from "@/lib/utils";
 import { siteConfig } from "@/lib/site-config";
 import { AttendanceList } from "@/components/attendance-list";
 
-// This page lives outside app/dashboard/, so unlike the teacher-only
-// attendance marking page (app/attendance/mark) it isn't gated by the
-// Teacher/Admin role — any signed-in user can look up a class's attendance
-// here.
+// Public: anyone can view attendance, signed in or not — this page lives
+// outside app/dashboard/ and, unlike the teacher-only attendance marking
+// page (app/attendance/mark), doesn't redirect signed-out visitors away
+// (same pattern as app/events/page.tsx and app/timetable/page.tsx).
 async function AttendanceListGate() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-  const user = data?.claims;
-
-  if (!user) redirect("/auth/login");
-
   // RLS on classes has no policies, so reads go through the service-role
-  // client too (same pattern as the protected pages).
+  // client too (same pattern as the other public pages).
   const admin = createAdminClient();
-  const { data: classes } = await admin
-    .from("classes")
-    .select("id, name")
-    .order("name");
+  const [{ data: classes }, { data: sections }] = await Promise.all([
+    admin.from("classes").select("id, name").order("name"),
+    admin.from("sections").select("id, name, class_id").order("name"),
+  ]);
 
-  return <AttendanceList classes={classes ?? []} />;
+  return <AttendanceList classes={classes ?? []} sections={sections ?? []} />;
 }
 
 export default function AttendanceListPage() {
