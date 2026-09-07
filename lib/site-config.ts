@@ -77,7 +77,6 @@ type RawSiteConfig = {
     eyebrow: string;
     heading: string;
     body: string;
-    groupPhoto: Image;
   };
   cta: {
     eyebrow: string;

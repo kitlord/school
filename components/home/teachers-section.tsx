@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useSite } from "@/components/site-provider";
 import { useStaff } from "@/components/home/use-staff";
 
@@ -16,16 +15,6 @@ export function TeachersSection() {
           <h2 className="text-3xl">{teachers.heading}</h2>
           <div className="h-1 w-16 bg-primary" />
           <p className="text-muted-foreground">{teachers.body}</p>
-        </div>
-
-        <div className="relative aspect-[3/2] w-full max-w-2xl overflow-hidden rounded-lg">
-          <Image
-            src={teachers.groupPhoto.src}
-            alt={teachers.groupPhoto.alt}
-            fill
-            className="object-cover object-top"
-            sizes="(min-width: 768px) 42rem, 100vw"
-          />
         </div>
 
         {!isLoading && staff.length === 0 ? (
