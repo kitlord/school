@@ -43,7 +43,6 @@ type Image = { src: string; alt: string };
 type RawSiteConfig = {
   name: string;
   shortName: string;
-  initials: string;
   description: string;
   nav: LabeledLink[];
   hero: {

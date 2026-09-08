@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Menu } from "lucide-react";
 import { useSite } from "@/components/site-provider";
@@ -26,9 +27,13 @@ export function SiteHeader({ authSlot }: { authSlot: React.ReactNode }) {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-blur:bg-background/80">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5">
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <span className="flex size-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
-            {site.initials}
-          </span>
+          <Image
+            src="/logo.png"
+            alt={site.name}
+            width={32}
+            height={32}
+            className="size-8 object-contain"
+          />
           <span className="font-display text-lg text-heading">
             {site.name}
           </span>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { useSite } from "@/components/site-provider";
 import { useStaff } from "@/components/home/use-staff";
@@ -15,9 +16,13 @@ export function SiteFooter() {
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-10 px-5 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
-              {site.initials}
-            </span>
+            <Image
+              src="/logo.png"
+              alt={site.name}
+              width={32}
+              height={32}
+              className="size-8 object-contain"
+            />
             <span className="font-display text-lg text-heading">
               {site.name}
             </span>
