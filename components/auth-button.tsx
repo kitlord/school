@@ -6,14 +6,18 @@ import { LogoutButton } from "./logout-button";
 export async function AuthButton() {
   const supabase = await createClient();
 
-  // You can also use getUser() which will be slower.
-  const { data } = await supabase.auth.getClaims();
+  // getUser() (not the faster getClaims()) because we need user_metadata
+  // for the display name below, which isn't in the JWT claims.
+  const { data, error } = await supabase.auth.getUser();
+  const user = !error ? data.user : null;
 
-  const user = data?.claims;
+  const fullName = (user?.user_metadata as { full_name?: string } | null)
+    ?.full_name?.trim();
+  const displayName = fullName || user?.email;
 
   return user ? (
     <div className="flex min-w-0 flex-wrap items-center gap-4 break-words">
-      Hey, {user.email}!
+      Hey, {displayName}!
       <LogoutButton />
     </div>
   ) : (

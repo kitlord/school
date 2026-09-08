@@ -8,7 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Download } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type SchoolClass = { id: number; name: string | null };
@@ -55,6 +57,10 @@ export function TimetableView({
     [sections, classId],
   );
   const sectionRequired = sectionsForClass.length > 0;
+  const selectedClassName = classes.find((c) => c.id === Number(classId))?.name;
+  const selectedSectionName = sectionsForClass.find(
+    (s) => s.id === Number(sectionId),
+  )?.name;
 
   // Reset the section whenever the class changes, defaulting to that
   // class's first section when it has any.
@@ -104,19 +110,49 @@ export function TimetableView({
     return withTime ? formatTimeRange(withTime.start_time, withTime.end_time) : null;
   };
 
+  // window.print() prints whatever's currently visible on the page — the
+  // rest of app/timetable/page.tsx (nav, admin editor, footer) is marked
+  // print:hidden so only this card's content ends up in the PDF. The
+  // browser's print dialog lets the user pick "Save as PDF", so this
+  // needs no PDF library, server route, or image-rendering step — just
+  // print CSS. No separate "download as image" option: a real PDF via
+  // print is strictly better than a rasterized screenshot here, so there
+  // wasn't a reason to build both.
+  const handleDownload = () => window.print();
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Timetable</CardTitle>
-          <CardDescription>
-            Select a class{sectionRequired ? " and section" : ""} to see its
-            weekly schedule
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between gap-4">
+          <div>
+            <CardTitle className="text-2xl">Timetable</CardTitle>
+            <CardDescription className="print:hidden">
+              Select a class{sectionRequired ? " and section" : ""} to see
+              its weekly schedule
+            </CardDescription>
+            {/* Print-only: gives the PDF/printout a heading even though
+                the selectors themselves are hidden for print. */}
+            <CardDescription className="hidden print:block">
+              {selectedClassName}
+              {selectedSectionName ? ` - ${selectedSectionName}` : ""}
+            </CardDescription>
+          </div>
+          {periods.length > 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="shrink-0 print:hidden"
+            >
+              <Download className="size-4" />
+              Download PDF
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-6">
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4 print:hidden">
               <div className="grid gap-2">
                 <Label htmlFor="classId">Class</Label>
                 <select

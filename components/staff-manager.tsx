@@ -11,15 +11,25 @@ type StaffMember = {
 };
 
 type NewStaff = { name: string; designation: string; role: string };
+type Account = { email: string; fullName: string };
 
 const EMPTY_NEW: NewStaff = { name: "", designation: "", role: "" };
+const PICKER_VALUE = (a: Account) => a.fullName || a.email;
 
 // Admin-only manager for the public staff directory shown on the home
 // page's "Meet Our Teachers" section (see components/home/teachers-section.tsx,
 // GET /api/staff). Adding someone here is unrelated to granting them the
 // Teacher/Admin role above — a role controls what a signed-in account can
-// do, this controls who's publicly listed. Neither implies the other.
-export function StaffManager() {
+// do, this controls who's publicly listed. Neither implies the other, and
+// `existingAccounts` (current Teacher/Admin accounts) is only ever used to
+// pre-fill the Name field below — picking one doesn't link or sync the two
+// afterward, it's a one-time convenience so a real teacher's name doesn't
+// need retyping.
+export function StaffManager({
+  existingAccounts,
+}: {
+  existingAccounts: Account[];
+}) {
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -127,6 +137,27 @@ export function StaffManager() {
         onSubmit={handleAdd}
         className="flex flex-wrap items-end gap-2 border-t pt-4"
       >
+        {existingAccounts.length > 0 && (
+          <label className="flex flex-col gap-1 text-sm">
+            Fill from existing account
+            <select
+              defaultValue=""
+              onChange={(e) => {
+                if (!e.target.value) return;
+                setNewStaff((prev) => ({ ...prev, name: e.target.value }));
+                e.target.value = "";
+              }}
+              className="rounded border bg-background px-2 py-1 text-foreground"
+            >
+              <option value="">Choose a Teacher/Admin…</option>
+              {existingAccounts.map((a) => (
+                <option key={a.email} value={PICKER_VALUE(a)}>
+                  {PICKER_VALUE(a)}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="flex flex-col gap-1 text-sm">
           Name
           <input

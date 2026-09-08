@@ -103,6 +103,41 @@ async function UserRolesTable() {
   );
 }
 
+// Feeds StaffManager's "Fill from existing account" picker — a
+// convenience for the common case (a real Teacher/Admin who should also
+// be listed on the home page) so their name doesn't need retyping. Staff
+// rows still don't reference these accounts in any way once added: this
+// only pre-fills the "Add staff member" form once, it doesn't link or
+// sync afterward (see the note on StaffManager for why the two stay
+// separate).
+async function TeacherAndAdminAccounts() {
+  const admin = createAdminClient();
+
+  const [{ data: usersData }, { data: userRoles }, { data: roles }] =
+    await Promise.all([
+      admin.auth.admin.listUsers(),
+      admin.from("user_roles").select("user_id, role_id"),
+      admin.from("roles").select("id, name"),
+    ]);
+
+  const teacherOrAdminRoleIds = new Set(
+    (roles ?? [])
+      .filter((r) => r.name === "Teacher" || r.name === "Admin")
+      .map((r) => r.id),
+  );
+  const roleByUserId = new Map(userRoles?.map((r) => [r.user_id, r.role_id]));
+
+  const accounts = usersData.users
+    .filter((u) => teacherOrAdminRoleIds.has(roleByUserId.get(u.id) ?? -1))
+    .map((u) => ({
+      email: u.email ?? "",
+      fullName:
+        (u.user_metadata as { full_name?: string } | null)?.full_name ?? "",
+    }));
+
+  return <StaffManager existingAccounts={accounts} />;
+}
+
 // This page lives outside app/dashboard/, so it isn't wrapped by the
 // dashboard layout — it carries its own nav/footer (same pattern as
 // app/students/page.tsx and app/attendance/page.tsx).
@@ -141,9 +176,15 @@ export default function AdminPanel() {
               Shown on the home page&apos;s &quot;Meet Our Teachers&quot;
               section. This is separate from the Teacher/Admin role above —
               granting someone a role doesn&apos;t list them here, and
-              listing someone here doesn&apos;t give them a role.
+              listing someone here doesn&apos;t give them a role, since not
+              every staff member needs a login (or vice versa). Pick an
+              existing account below to save retyping their name.
             </p>
-            <StaffManager />
+            <Suspense
+              fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
+            >
+              <TeacherAndAdminAccounts />
+            </Suspense>
           </div>
 
           <div className="flex flex-col gap-4">

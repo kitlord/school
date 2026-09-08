@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Menu } from "lucide-react";
 import { useSite } from "@/components/site-provider";
+import { useCurrentUser } from "@/components/home/use-current-user";
 
 // Explicit "use client" (unlike most of components/home/*) because this
 // is now imported directly by Server Component pages outside the home
@@ -13,6 +14,13 @@ import { useSite } from "@/components/site-provider";
 // since useSite() (via useContext) doesn't work otherwise.
 export function SiteHeader({ authSlot }: { authSlot: React.ReactNode }) {
   const site = useSite();
+  // "Dashboard" is added to the nav for Teacher/Admin only (see
+  // GET /api/me) — /dashboard itself is open to any signed-in user, this
+  // is just a shortcut for the roles that get the most use out of it.
+  const { canAccessDashboard } = useCurrentUser();
+  const navItems = canAccessDashboard
+    ? [...site.nav, { label: "Dashboard", href: "/dashboard" }]
+    : site.nav;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-blur:bg-background/80">
@@ -27,7 +35,7 @@ export function SiteHeader({ authSlot }: { authSlot: React.ReactNode }) {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {site.nav.map((item) => (
+          {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
@@ -50,7 +58,7 @@ export function SiteHeader({ authSlot }: { authSlot: React.ReactNode }) {
             <span className="sr-only">Open menu</span>
           </summary>
           <div className="absolute right-0 top-full mt-2 flex w-72 max-w-[calc(100vw-2.5rem)] flex-col gap-1 rounded-md border border-border bg-popover p-3 shadow-md">
-            {site.nav.map((item) => (
+            {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}

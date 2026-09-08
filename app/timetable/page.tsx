@@ -67,24 +67,32 @@ export default function TimetablePage() {
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <SiteHeader
-          authSlot={
-            !hasEnvVars ? (
-              <EnvVarWarning />
-            ) : (
-              <Suspense>
-                <AuthButton />
-              </Suspense>
-            )
-          }
-        />
+        {/* print:hidden throughout: clicking "Download PDF" on the
+            timetable below just calls window.print(), so anything that
+            isn't the timetable itself (nav, admin editor, footer) is
+            hidden for that print — see TimetableView. */}
+        <div className="w-full print:hidden">
+          <SiteHeader
+            authSlot={
+              !hasEnvVars ? (
+                <EnvVarWarning />
+              ) : (
+                <Suspense>
+                  <AuthButton />
+                </Suspense>
+              )
+            }
+          />
+        </div>
         <div className="flex-1 flex flex-col gap-8 max-w-4xl w-full p-5">
-          <h1 className="font-bold text-2xl">Timetable</h1>
-          <Suspense
-            fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
-          >
-            <AdminIssueTimetable />
-          </Suspense>
+          <h1 className="font-bold text-2xl print:hidden">Timetable</h1>
+          <div className="print:hidden">
+            <Suspense
+              fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
+            >
+              <AdminIssueTimetable />
+            </Suspense>
+          </div>
           <Suspense
             fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
           >
@@ -92,7 +100,7 @@ export default function TimetablePage() {
           </Suspense>
         </div>
 
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16 print:hidden">
           <p>
             Powered by{" "}
             <a
