@@ -88,3 +88,32 @@
     @apply font-display text-heading font-normal;
   }
 }
+
+/*
+ * Google Website Translator (see components/google-translate.tsx). Its
+ * default look doesn't respect our theme and it shifts the whole page
+ * down 40px for a full-width banner once translated — this hides that
+ * banner and undoes the shift, and gives the dropdown itself a look
+ * closer to the rest of the UI. Not in @layer so it always wins over
+ * Google's own injected (non-Tailwind) styles.
+ */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
+#google_translate_element .goog-te-gadget {
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+#google_translate_element .goog-te-gadget .goog-te-combo {
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  border-radius: calc(var(--radius) + 2px);
+  border: 1px solid hsl(var(--input));
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: 0.875rem;
+}

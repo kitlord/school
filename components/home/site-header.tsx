@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { GoogleTranslate } from "@/components/google-translate";
 import { Menu } from "lucide-react";
 import { useSite } from "@/components/site-provider";
 import { useCurrentUser } from "@/components/home/use-current-user";
@@ -50,6 +51,13 @@ export function SiteHeader({ authSlot }: { authSlot: React.ReactNode }) {
             </a>
           ))}
         </nav>
+
+        {/* Visible at every width, unlike the auth/theme controls and nav
+            below — mounted once here so we don't load the Google script
+            or create its #google_translate_element div twice. */}
+        <div className="flex items-center">
+          <GoogleTranslate />
+        </div>
 
         <div className="hidden items-center gap-3 md:flex">
           {authSlot}
