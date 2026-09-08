@@ -52,9 +52,10 @@ async function authorizeTeacherOrAdmin() {
 }
 
 // Serverless function (Vercel): returns a class's (or one section's)
-// attendance roster for a date — every student, with their present/absent
-// mark, or null if not yet marked. Fully public, no sign-in required, same
-// as /api/timetable — see app/attendance/page.tsx.
+// attendance for a date — or, when `toDate` is also given (and differs
+// from `date`), a present/absent summary across that whole date..toDate
+// range instead. Fully public, no sign-in required, same as /api/timetable
+// — see app/attendance/page.tsx.
 export async function GET(request: Request) {
   const admin = createAdminClient();
 
@@ -62,6 +63,8 @@ export async function GET(request: Request) {
   const classIdParam = searchParams.get("classId");
   const classId = classIdParam !== null ? Number(classIdParam) : NaN;
   const date = searchParams.get("date") ?? new Date().toISOString().slice(0, 10);
+  // Optional: end of a date range — see the function comment above.
+  const toDate = searchParams.get("toDate");
   // Optional: narrows the roster to one section of the class. A class with
   // multiple sections would otherwise mix every section's students into one
   // list, since roll numbers aren't scoped to a section.
@@ -86,6 +89,18 @@ export async function GET(request: Request) {
       { status: 400 },
     );
   }
+  if (toDate !== null && !DATE_RE.test(toDate)) {
+    return NextResponse.json(
+      { error: "toDate must be YYYY-MM-DD" },
+      { status: 400 },
+    );
+  }
+  if (toDate !== null && toDate < date) {
+    return NextResponse.json(
+      { error: "toDate must be on or after date" },
+      { status: 400 },
+    );
+  }
 
   let studentsQuery = admin
     .from("students")
@@ -96,13 +111,21 @@ export async function GET(request: Request) {
     studentsQuery = studentsQuery.eq("section_id", sectionId);
   }
 
+  const isRange = toDate !== null && toDate !== date;
+
+  let attendanceQuery = admin
+    .from("attendance")
+    .select("roll, present")
+    .eq("class", classId);
+  attendanceQuery =
+    isRange && toDate
+      ? attendanceQuery.gte("date", date).lte("date", toDate)
+      : attendanceQuery.eq("date", date);
+
   const [
     { data: students, error: studentsError },
     { data: marks, error: marksError },
-  ] = await Promise.all([
-    studentsQuery,
-    admin.from("attendance").select("roll, present").eq("class", classId).eq("date", date),
-  ]);
+  ] = await Promise.all([studentsQuery, attendanceQuery]);
 
   if (studentsError || marksError) {
     return NextResponse.json(
@@ -111,14 +134,46 @@ export async function GET(request: Request) {
     );
   }
 
-  const presentByRoll = new Map(marks?.map((m) => [m.roll, m.present]));
-  const roster = (students ?? []).map((s) => ({
-    roll: s.roll,
-    name: s.name,
-    present: presentByRoll.has(s.roll) ? (presentByRoll.get(s.roll) ?? null) : null,
-  }));
+  if (!isRange) {
+    const presentByRoll = new Map(marks?.map((m) => [m.roll, m.present]));
+    const roster = (students ?? []).map((s) => ({
+      roll: s.roll,
+      name: s.name,
+      present: presentByRoll.has(s.roll) ? (presentByRoll.get(s.roll) ?? null) : null,
+    }));
 
-  return NextResponse.json({ students: roster });
+    return NextResponse.json({ type: "single", students: roster });
+  }
+
+  // Range summary: how many of the marked days in date..toDate each
+  // student was present/absent for. Days nobody marked at all (e.g.
+  // holidays, or before a student enrolled) don't count against anyone —
+  // the denominator is each student's own totalMarked, not the raw number
+  // of calendar days in the range.
+  const countsByRoll = new Map<number, { present: number; absent: number }>();
+  for (const m of marks ?? []) {
+    const counts = countsByRoll.get(m.roll) ?? { present: 0, absent: 0 };
+    if (m.present) counts.present += 1;
+    else counts.absent += 1;
+    countsByRoll.set(m.roll, counts);
+  }
+
+  const summary = (students ?? []).map((s) => {
+    const counts = countsByRoll.get(s.roll) ?? { present: 0, absent: 0 };
+    return {
+      roll: s.roll,
+      name: s.name,
+      presentCount: counts.present,
+      absentCount: counts.absent,
+      totalMarked: counts.present + counts.absent,
+    };
+  });
+
+  return NextResponse.json({
+    type: "range",
+    range: { from: date, to: toDate },
+    students: summary,
+  });
 }
 
 // Serverless function (Vercel): lets an authorized teacher (or admin) mark a
