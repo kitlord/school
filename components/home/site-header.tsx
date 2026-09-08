@@ -1,15 +1,23 @@
+"use client";
+
 import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Menu } from "lucide-react";
 import { useSite } from "@/components/site-provider";
 
+// Explicit "use client" (unlike most of components/home/*) because this
+// is now imported directly by Server Component pages outside the home
+// page (app/events, app/timetable, app/attendance, app/admin, ...), not
+// just via home-page.tsx's own "use client" boundary — a plain import
+// from a Server Component needs the file itself to declare the boundary,
+// since useSite() (via useContext) doesn't work otherwise.
 export function SiteHeader({ authSlot }: { authSlot: React.ReactNode }) {
   const site = useSite();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-blur:bg-background/80">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5">
-        <Link href="#home" className="flex items-center gap-2 shrink-0">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
           <span className="flex size-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-secondary-foreground">
             {site.initials}
           </span>

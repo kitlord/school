@@ -5,14 +5,14 @@
   "description": "Parankimamvilayil Govinthan Nair Memorial Upper Primary School (PGNMUPS), Pavumba — nurturing children in Class V to VII since 1979.",
 
   "nav": [
-    { "label": "Home", "href": "#home" },
-    { "label": "About", "href": "#about" },
-    { "label": "Teachers", "href": "#teachers" },
-    { "label": "Gallery", "href": "#gallery" },
+    { "label": "Home", "href": "/#home" },
+    { "label": "About", "href": "/#about" },
+    { "label": "Teachers", "href": "/#teachers" },
+    { "label": "Gallery", "href": "/#gallery" },
     { "label": "Events", "href": "/events" },
     { "label": "Attendance", "href": "/attendance" },
     { "label": "Timetable", "href": "/timetable" },
-    { "label": "Contact", "href": "#contact" }
+    { "label": "Contact", "href": "/#contact" }
   ],
 
   "hero": {
@@ -20,7 +20,6 @@
 
     "headline": "Nurturing Every Child to Shine",
     "body": "A caring place to learn and grow in Pavumba since 1979 — Class V to VII across 6 divisions, with 10 teaching staff and 1 non-teaching staff who know every child by name.",
-    "primaryCta": { "label": "Enroll Now", "href": "/auth/sign-up" },
     "secondaryCta": { "label": "Learn More", "href": "#about" },
 
     "image": { "src": "/school.jpg", "alt": "Our school gate" }
@@ -70,11 +69,11 @@
     "heading": "Life at PGNMUPS Pavumba",
     "body": "A glimpse into our children's day — learning, playing, and everything in between.",
     "images": [
-      { "src": "/flag.jpeg", "alt": "Morning assembly" },
-      { "src": "/meditation.jpeg", "alt": "Students and teachers doing exercises at assembly" },
-      { "src": "/onam.jpeg", "alt": "School event" },
-      { "src": "/talent-show.jpg", "alt": "School event" },
-      { "src": "/nature.jpg", "alt": "Students and staff planting a tree" }
+      { "src": "/flag.jpeg", "alt": "Flag hoisting" },
+      { "src": "/meditation.jpeg", "alt": "Meditation session" },
+      { "src": "/onam.jpeg", "alt": "Onam celebration" },
+      { "src": "/dance.jpg", "alt": "Yearly talent show" },
+      { "src": "/nature-event.jpg", "alt": "Students and staff on field" }
     ]
   },
 

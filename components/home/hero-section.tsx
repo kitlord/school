@@ -21,9 +21,6 @@ export function HeroSection() {
             {hero.body}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-4">
-            <Button asChild size="lg">
-              <Link href={hero.primaryCta.href}>{hero.primaryCta.label}</Link>
-            </Button>
             <Button asChild size="lg" variant="outline">
               <Link href={hero.secondaryCta.href}>
                 {hero.secondaryCta.label}

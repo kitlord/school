@@ -50,7 +50,6 @@ type RawSiteConfig = {
     eyebrow: string;
     headline: string;
     body: string;
-    primaryCta: LabeledLink;
     secondaryCta: LabeledLink;
     image: Image;
   };
