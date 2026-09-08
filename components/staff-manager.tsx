@@ -143,8 +143,9 @@ export function StaffManager({
             <select
               defaultValue=""
               onChange={(e) => {
-                if (!e.target.value) return;
-                setNewStaff((prev) => ({ ...prev, name: e.target.value }));
+                const name = e.target.value;
+                if (!name) return;
+                setNewStaff((prev) => ({ ...prev, name }));
                 e.target.value = "";
               }}
               className="rounded border bg-background px-2 py-1 text-foreground"

@@ -16,8 +16,8 @@ export async function AuthButton() {
   const displayName = fullName || user?.email;
 
   return user ? (
-    <div className="flex min-w-0 flex-wrap items-center gap-4 break-words">
-      Hey, {displayName}!
+    <div className="flex min-w-0 flex-wrap items-center gap-2 break-words">
+      <p>Hey, {displayName}!</p>
       <LogoutButton />
     </div>
   ) : (
