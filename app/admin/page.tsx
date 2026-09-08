@@ -10,6 +10,7 @@ import { SiteHeader } from "@/components/home/site-header";
 import { DeleteUserButton } from "@/components/delete-user-button";
 import { EditUserNameField } from "@/components/edit-user-name-field";
 import { ContactInfoForm } from "@/components/contact-info-form";
+import { StaffManager } from "@/components/staff-manager";
 import { updateUserRole, deleteUser } from "./actions";
 
 async function UserRolesTable() {
@@ -75,7 +76,7 @@ async function UserRolesTable() {
                 <select
                   name="roleId"
                   defaultValue={roleByUserId.get(u.id) ?? viewerRoleId}
-                  className="border rounded px-2 py-1 bg-background"
+                  className="border rounded px-2 py-1 bg-background text-foreground"
                 >
                   {roles?.map((r) => (
                     <option key={r.id} value={r.id}>
@@ -132,6 +133,17 @@ export default function AdminPanel() {
             >
               <UserRolesTable />
             </Suspense>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h2 className="font-bold text-2xl">Staff</h2>
+            <p className="text-sm text-muted-foreground">
+              Shown on the home page&apos;s &quot;Meet Our Teachers&quot;
+              section. This is separate from the Teacher/Admin role above —
+              granting someone a role doesn&apos;t list them here, and
+              listing someone here doesn&apos;t give them a role.
+            </p>
+            <StaffManager />
           </div>
 
           <div className="flex flex-col gap-4">

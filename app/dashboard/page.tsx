@@ -124,9 +124,14 @@ async function DashboardContent() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <h1 className="font-bold text-2xl">Welcome back</h1>
-          <p className="text-sm text-muted-foreground">{user.email}</p>
+          <p
+            className="truncate text-sm text-muted-foreground"
+            title={user.email}
+          >
+            {user.email}
+          </p>
         </div>
         <Badge variant="secondary">{roleName}</Badge>
       </div>

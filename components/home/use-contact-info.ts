@@ -5,11 +5,8 @@ import { useEffect, useState } from "react";
 export type ContactInfo = {
   address: string | null;
   phone: string | null;
-  phoneAlt: string | null;
   whatsapp: string | null;
-  whatsappCountryCode: string | null;
   email: string | null;
-  hours: string | null;
 };
 
 /**

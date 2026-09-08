@@ -123,7 +123,7 @@ export function TimetableView({
                   id="classId"
                   value={classId}
                   onChange={(e) => setClassId(e.target.value)}
-                  className="flex h-9 w-full min-w-40 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+                  className="flex h-9 w-full min-w-40 rounded-md border border-input bg-background text-foreground px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
                 >
                   <option value="" disabled>
                     Select a class
@@ -142,7 +142,7 @@ export function TimetableView({
                     id="sectionId"
                     value={sectionId}
                     onChange={(e) => setSectionId(e.target.value)}
-                    className="flex h-9 w-full min-w-32 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+                    className="flex h-9 w-full min-w-32 rounded-md border border-input bg-background text-foreground px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
                   >
                     <option value="" disabled>
                       Select a section

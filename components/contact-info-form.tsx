@@ -5,38 +5,30 @@ import { useEffect, useState } from "react";
 type ContactFields = {
   address: string;
   phone: string;
-  phoneAlt: string;
   whatsapp: string;
-  whatsappCountryCode: string;
   email: string;
-  hours: string;
 };
 
 const EMPTY: ContactFields = {
   address: "",
   phone: "",
-  phoneAlt: "",
   whatsapp: "",
-  whatsappCountryCode: "",
   email: "",
-  hours: "",
 };
 
 const FIELDS: { key: keyof ContactFields; label: string }[] = [
   { key: "address", label: "Address" },
   { key: "phone", label: "Phone" },
-  { key: "phoneAlt", label: "Alternate phone" },
-  { key: "whatsappCountryCode", label: "WhatsApp country code" },
   { key: "whatsapp", label: "WhatsApp number" },
   { key: "email", label: "Email" },
-  { key: "hours", label: "Hours (e.g. Mon–Fri · 10:00 AM – 4:00 PM)" },
 ];
 
 // Admin-only editor for the school's public contact details, shown in the
 // site footer (see components/home/site-footer.tsx, use-contact-info.ts).
 // Reads/writes GET|PUT /api/contact, backed by the singleton `contact_info`
 // table — every field is optional, an empty one just hides that row in
-// the footer.
+// the footer. WhatsApp's country code isn't here: it's fixed to +91 in
+// the footer's link, not admin-configurable.
 export function ContactInfoForm() {
   const [fields, setFields] = useState<ContactFields>(EMPTY);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,11 +46,8 @@ export function ContactInfoForm() {
           setFields({
             address: c.address ?? "",
             phone: c.phone ?? "",
-            phoneAlt: c.phoneAlt ?? "",
             whatsapp: c.whatsapp ?? "",
-            whatsappCountryCode: c.whatsappCountryCode ?? "",
             email: c.email ?? "",
-            hours: c.hours ?? "",
           });
         }
       } finally {

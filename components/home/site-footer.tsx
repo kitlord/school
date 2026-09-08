@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { useSite } from "@/components/site-provider";
 import { useStaff } from "@/components/home/use-staff";
 import { useContactInfo } from "@/components/home/use-contact-info";
@@ -91,31 +91,21 @@ export function SiteFooter() {
                   <span>{contact.address}</span>
                 </div>
               )}
-              {(contact.phone || contact.phoneAlt) && (
+              {contact.phone && (
                 <div className="flex items-center gap-2">
                   <Phone className="size-4 shrink-0 text-primary" />
-                  <span className="flex flex-col">
-                    {contact.phone && (
-                      <a href={`tel:${contact.phone}`} className="hover:text-primary">
-                        {contact.phone}
-                      </a>
-                    )}
-                    {contact.phoneAlt && (
-                      <a
-                        href={`tel:${contact.phoneAlt}`}
-                        className="hover:text-primary"
-                      >
-                        {contact.phoneAlt}
-                      </a>
-                    )}
-                  </span>
+                  <a href={`tel:${contact.phone}`} className="hover:text-primary">
+                    {contact.phone}
+                  </a>
                 </div>
               )}
               {contact.whatsapp && (
                 <div className="flex items-center gap-2">
                   <MessageCircle className="size-4 shrink-0 text-primary" />
+                  {/* +91 (India) is fixed here, not admin-configurable —
+                      see the note on ContactInfoForm. */}
                   <a
-                    href={`https://wa.me/${contact.whatsappCountryCode ?? ""}${contact.whatsapp}`}
+                    href={`https://wa.me/91${contact.whatsapp}`}
                     target="_blank"
                     rel="noreferrer"
                     className="hover:text-primary"
@@ -133,12 +123,6 @@ export function SiteFooter() {
                   >
                     {contact.email}
                   </a>
-                </div>
-              )}
-              {contact.hours && (
-                <div className="flex items-center gap-2">
-                  <Clock className="size-4 shrink-0 text-primary" />
-                  <span>{contact.hours}</span>
                 </div>
               )}
             </div>

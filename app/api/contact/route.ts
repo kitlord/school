@@ -9,22 +9,16 @@ const ROW_ID = 1;
 type ContactRow = {
   address: string | null;
   phone: string | null;
-  phone_alt: string | null;
   whatsapp: string | null;
-  whatsapp_country_code: string | null;
   email: string | null;
-  hours: string | null;
 };
 
 function toContact(row: ContactRow) {
   return {
     address: row.address,
     phone: row.phone,
-    phoneAlt: row.phone_alt,
     whatsapp: row.whatsapp,
-    whatsappCountryCode: row.whatsapp_country_code,
     email: row.email,
-    hours: row.hours,
   };
 }
 
@@ -35,7 +29,7 @@ export async function GET() {
 
   const { data, error } = await admin
     .from("contact_info")
-    .select("address, phone, phone_alt, whatsapp, whatsapp_country_code, email, hours")
+    .select("address, phone, whatsapp, email")
     .eq("id", ROW_ID)
     .single();
 
@@ -48,17 +42,18 @@ export async function GET() {
 
 // Serverless function (Vercel): lets an Admin update the school's contact
 // details in one request — every field is optional/nullable, so clearing
-// one (e.g. no alternate phone) is just omitting or nulling it.
+// one (e.g. no address yet) is just omitting or nulling it. WhatsApp's
+// country code isn't part of this: it's fixed to +91 in the footer link
+// (see components/home/site-footer.tsx), not admin-configurable.
 export async function PUT(request: Request) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
   const { admin } = auth;
 
   const body = await request.json();
-  const { address, phone, phoneAlt, whatsapp, whatsappCountryCode, email, hours } =
-    body;
+  const { address, phone, whatsapp, email } = body;
 
-  const fields = { address, phone, phoneAlt, whatsapp, whatsappCountryCode, email, hours };
+  const fields = { address, phone, whatsapp, email };
   for (const [key, value] of Object.entries(fields)) {
     if (value !== undefined && value !== null && typeof value !== "string") {
       return NextResponse.json({ error: `${key} must be text` }, { status: 400 });
@@ -70,15 +65,12 @@ export async function PUT(request: Request) {
     .update({
       address: address ?? null,
       phone: phone ?? null,
-      phone_alt: phoneAlt ?? null,
       whatsapp: whatsapp ?? null,
-      whatsapp_country_code: whatsappCountryCode ?? null,
       email: email ?? null,
-      hours: hours ?? null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", ROW_ID)
-    .select("address, phone, phone_alt, whatsapp, whatsapp_country_code, email, hours")
+    .select("address, phone, whatsapp, email")
     .single();
 
   if (error) {
