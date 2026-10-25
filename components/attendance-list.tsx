@@ -155,8 +155,11 @@ export function AttendanceList({
                 </select>
               </div>
             )}
-            <div className="flex gap-4">
-              <div className="grid flex-1 gap-2">
+            {/* Stacked until there's room for two date inputs side by side:
+                input[type=date] has an intrinsic minimum width (the picker
+                widget), so min-w-0 is needed for them to shrink at all. */}
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="grid min-w-0 flex-1 gap-2">
                 <Label htmlFor="date">Date</Label>
                 <Input
                   id="date"
@@ -165,7 +168,7 @@ export function AttendanceList({
                   onChange={(e) => setDate(e.target.value)}
                 />
               </div>
-              <div className="grid flex-1 gap-2">
+              <div className="grid min-w-0 flex-1 gap-2">
                 <Label htmlFor="toDate">To (optional)</Label>
                 <Input
                   id="toDate"
@@ -192,68 +195,72 @@ export function AttendanceList({
             )}
 
             {result?.type === "single" && result.students.length > 0 && (
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="text-left border-b">
-                    <th className="p-2">Roll</th>
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.students.map((s) => (
-                    <tr key={s.roll} className="border-b">
-                      <td className="p-2">{s.roll}</td>
-                      <td className="p-2">{s.name}</td>
-                      <td className="p-2">
-                        <span
-                          className={cn(
-                            "text-xs font-medium",
-                            s.present === null
-                              ? "text-muted-foreground"
-                              : s.present
-                                ? "text-green-600"
-                                : "text-red-500",
-                          )}
-                        >
-                          {statusLabel(s.present)}
-                        </span>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="text-left border-b">
+                      <th className="p-2">Roll</th>
+                      <th className="p-2">Name</th>
+                      <th className="p-2">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {result.students.map((s) => (
+                      <tr key={s.roll} className="border-b">
+                        <td className="p-2">{s.roll}</td>
+                        <td className="p-2">{s.name}</td>
+                        <td className="p-2">
+                          <span
+                            className={cn(
+                              "text-xs font-medium",
+                              s.present === null
+                                ? "text-muted-foreground"
+                                : s.present
+                                  ? "text-green-600"
+                                  : "text-red-500",
+                            )}
+                          >
+                            {statusLabel(s.present)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
 
             {result?.type === "range" && result.students.length > 0 && (
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="text-left border-b">
-                    <th className="p-2">Roll</th>
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Present</th>
-                    <th className="p-2">Absent</th>
-                    <th className="p-2">Marked</th>
-                    <th className="p-2">%</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.students.map((s) => (
-                    <tr key={s.roll} className="border-b">
-                      <td className="p-2">{s.roll}</td>
-                      <td className="p-2">{s.name}</td>
-                      <td className="p-2 text-green-600">{s.presentCount}</td>
-                      <td className="p-2 text-red-500">{s.absentCount}</td>
-                      <td className="p-2 text-muted-foreground">{s.totalMarked}</td>
-                      <td className="p-2">
-                        {s.totalMarked > 0
-                          ? `${Math.round((s.presentCount / s.totalMarked) * 100)}%`
-                          : "—"}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="text-left border-b">
+                      <th className="p-2">Roll</th>
+                      <th className="p-2">Name</th>
+                      <th className="p-2">Present</th>
+                      <th className="p-2">Absent</th>
+                      <th className="p-2">Marked</th>
+                      <th className="p-2">%</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {result.students.map((s) => (
+                      <tr key={s.roll} className="border-b">
+                        <td className="p-2">{s.roll}</td>
+                        <td className="p-2">{s.name}</td>
+                        <td className="p-2 text-green-600">{s.presentCount}</td>
+                        <td className="p-2 text-red-500">{s.absentCount}</td>
+                        <td className="p-2 text-muted-foreground">{s.totalMarked}</td>
+                        <td className="p-2">
+                          {s.totalMarked > 0
+                            ? `${Math.round((s.presentCount / s.totalMarked) * 100)}%`
+                            : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </CardContent>

@@ -37,7 +37,7 @@ export default function AttendanceListPage() {
             )
           }
         />
-        <div className="flex-1 flex flex-col gap-8 max-w-sm w-full p-5">
+        <div className="flex-1 flex flex-col gap-8 max-w-2xl w-full p-5">
           <h1 className="font-bold text-2xl">Attendance</h1>
           <Suspense
             fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
