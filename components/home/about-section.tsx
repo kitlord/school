@@ -37,22 +37,24 @@ export function AboutSection() {
   return (
     <section id="about" className="w-full">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-10 px-5 py-16 text-center md:py-24">
-        <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
-          {about.images.map((image) => (
-            <div
-              key={image.src}
-              className="relative aspect-[3/2] w-full overflow-hidden rounded-md"
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                className="object-cover object-top"
-                sizes="(min-width: 640px) 33vw, 50vw"
-              />
-            </div>
-          ))}
-        </div>
+        {about.images?.length > 0 && (
+          <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3">
+            {about.images.map((image) => (
+              <div
+                key={image.src}
+                className="relative aspect-[3/2] w-full overflow-hidden rounded-md"
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover object-top"
+                  sizes="(min-width: 640px) 33vw, 50vw"
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="flex max-w-2xl flex-col items-center gap-4">
           <span className="text-sm font-semibold uppercase tracking-wide text-primary">

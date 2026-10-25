@@ -52,15 +52,11 @@
     "heading": "Parankimamvilayil Govinthan Nair Memorial Upper Primary School",
     "body": "Established on 8 November 1979, Parankimamvilayil Govinthan Nair Memorial Upper Primary School has been nurturing children in Pavumba ever since — 10 teaching staff and 1 non-teaching staff caring for Class V to VII across 6 divisions.",
     "cta": { "label": "Meet Our Teachers", "href": "#teachers" },
-    
-    "images": [
-      { "src": "/lkg.jpeg", "alt": "Children learning in the classroom" },
-      { "src": "/ukg.jpeg", "alt": "Children learning in the classroom" },
-      { "src": "/class1.jpeg", "alt": "Children learning in the classroom" },
-      { "src": "/class2.jpeg", "alt": "Children learning in the classroom" },
-      { "src": "/class3.jpeg", "alt": "Children learning in the classroom" },
-      { "src": "/class4.jpeg", "alt": "Children learning in the classroom" }
-    ]
+
+    // Class photos from the old Navallur site were removed in the move to
+    // PGNMUPS; no replacements have been taken yet. Add PGNMUPS photos to
+    // public/ and list them here — the grid renders nothing while empty.
+    "images": []
   },
 
   "gallery": {
