@@ -8,8 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Download } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type SchoolClass = { id: number; name: string | null };
@@ -62,6 +64,11 @@ export function AttendanceList({
     [sections, classId],
   );
 
+  const selectedClassName = classes.find((c) => c.id === Number(classId))?.name;
+  const selectedSectionName = sectionsForClass.find(
+    (s) => s.id === Number(sectionId),
+  )?.name;
+
   // Reset to "All sections" whenever the class changes.
   useEffect(() => {
     setSectionId("");
@@ -102,90 +109,123 @@ export function AttendanceList({
   const presentCount =
     result?.type === "single" ? result.students.filter((s) => s.present).length : 0;
 
+  // Same approach as the timetable (see components/timetable-view.tsx):
+  // window.print() prints whatever's visible, and everything that isn't
+  // the list itself — nav, the class/section/date pickers, footer — is
+  // marked print:hidden, so the browser's "Save as PDF" produces just
+  // the roster. No PDF library or server route needed.
+  const handleDownload = () => window.print();
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Attendance list</CardTitle>
-          <CardDescription>
-            {isLoading
-              ? "Loading…"
-              : students.length === 0
-                ? "Look up a class's attendance for a date, or a summary across a range"
-                : result?.type === "range"
-                  ? `Summary from ${result.range.from} to ${result.range.to}`
-                  : `${presentCount} of ${students.length} present`}
-          </CardDescription>
+        <CardHeader className="flex flex-row items-start justify-between gap-4">
+          <div>
+            <CardTitle className="text-2xl">Attendance list</CardTitle>
+            <CardDescription>
+              {isLoading
+                ? "Loading…"
+                : students.length === 0
+                  ? "Look up a class's attendance for a date, or a summary across a range"
+                  : result?.type === "range"
+                    ? `Summary from ${result.range.from} to ${result.range.to}`
+                    : `${presentCount} of ${students.length} present`}
+            </CardDescription>
+            {/* Print-only: names the class, section and date in the PDF,
+                since the selectors themselves are hidden for print. */}
+            <CardDescription className="hidden print:block">
+              {selectedClassName}
+              {selectedSectionName ? ` - ${selectedSectionName}` : ""}
+              {result?.type === "single" ? ` · ${date}` : ""}
+            </CardDescription>
+          </div>
+          {students.length > 0 && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="shrink-0 print:hidden"
+            >
+              <Download className="size-4" />
+              Download PDF
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="classId">Class</Label>
-              <select
-                id="classId"
-                value={classId}
-                onChange={(e) => setClassId(e.target.value)}
-                className="flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
-              >
-                <option value="" disabled>
-                  Select a class
-                </option>
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {sectionsForClass.length > 0 && (
+            {/* The pickers are page controls, not part of the roster, so
+                they're left out of the printout — the heading above keeps
+                the class/section/date in the PDF. */}
+            <div className="flex flex-col gap-6 print:hidden">
               <div className="grid gap-2">
-                <Label htmlFor="sectionId">Section</Label>
+                <Label htmlFor="classId">Class</Label>
                 <select
-                  id="sectionId"
-                  value={sectionId}
-                  onChange={(e) => setSectionId(e.target.value)}
+                  id="classId"
+                  value={classId}
+                  onChange={(e) => setClassId(e.target.value)}
                   className="flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
                 >
-                  <option value="">All sections</option>
-                  {sectionsForClass.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
+                  <option value="" disabled>
+                    Select a class
+                  </option>
+                  {classes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
                     </option>
                   ))}
                 </select>
               </div>
-            )}
-            {/* Stacked until there's room for two date inputs side by side:
-                input[type=date] has an intrinsic minimum width (the picker
-                widget), so min-w-0 is needed for them to shrink at all. */}
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <div className="grid min-w-0 flex-1 gap-2">
-                <Label htmlFor="date">Date</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                />
+              {sectionsForClass.length > 0 && (
+                <div className="grid gap-2">
+                  <Label htmlFor="sectionId">Section</Label>
+                  <select
+                    id="sectionId"
+                    value={sectionId}
+                    onChange={(e) => setSectionId(e.target.value)}
+                    className="flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 py-1 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring md:text-sm"
+                  >
+                    <option value="">All sections</option>
+                    {sectionsForClass.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              {/* Stacked until there's room for two date inputs side by side:
+                  input[type=date] has an intrinsic minimum width (the picker
+                  widget), so min-w-0 is needed for them to shrink at all. */}
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <div className="grid min-w-0 flex-1 gap-2">
+                  <Label htmlFor="date">Date</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                  />
+                </div>
+                <div className="grid min-w-0 flex-1 gap-2">
+                  <Label htmlFor="toDate">To (optional)</Label>
+                  <Input
+                    id="toDate"
+                    type="date"
+                    min={date}
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="grid min-w-0 flex-1 gap-2">
-                <Label htmlFor="toDate">To (optional)</Label>
-                <Input
-                  id="toDate"
-                  type="date"
-                  min={date}
-                  value={toDate}
-                  onChange={(e) => setToDate(e.target.value)}
-                />
-              </div>
+              {toDate && toDate !== date && (
+                <p className="text-xs text-muted-foreground">
+                  Showing a present/absent summary across the whole range
+                  instead of a single day. Clear &quot;To&quot; to go back to a
+                  single day&apos;s roster.
+                </p>
+              )}
             </div>
-            {toDate && toDate !== date && (
-              <p className="text-xs text-muted-foreground">
-                Showing a present/absent summary across the whole range
-                instead of a single day. Clear &quot;To&quot; to go back to a
-                single day&apos;s roster.
-              </p>
-            )}
 
             {error && <p className="text-sm text-red-500">{error}</p>}
             {!error && !isLoading && students.length === 0 && (

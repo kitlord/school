@@ -26,19 +26,26 @@ export default function AttendanceListPage() {
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <SiteHeader
-          authSlot={
-            !hasEnvVars ? (
-              <EnvVarWarning />
-            ) : (
-              <Suspense>
-                <AuthButton />
-              </Suspense>
-            )
-          }
-        />
+        {/* print:hidden throughout: clicking "Download PDF" on the
+            attendance list below just calls window.print(), so anything
+            that isn't the list itself (nav, footer) is hidden for that
+            print — see AttendanceList, and app/timetable/page.tsx for the
+            same pattern. */}
+        <div className="w-full print:hidden">
+          <SiteHeader
+            authSlot={
+              !hasEnvVars ? (
+                <EnvVarWarning />
+              ) : (
+                <Suspense>
+                  <AuthButton />
+                </Suspense>
+              )
+            }
+          />
+        </div>
         <div className="flex-1 flex flex-col gap-8 max-w-2xl w-full p-5">
-          <h1 className="font-bold text-2xl">Attendance</h1>
+          <h1 className="font-bold text-2xl print:hidden">Attendance</h1>
           <Suspense
             fallback={<p className="text-sm text-muted-foreground">Loading…</p>}
           >
@@ -46,7 +53,7 @@ export default function AttendanceListPage() {
           </Suspense>
         </div>
 
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16 print:hidden">
           <p>
             Powered by{" "}
             <a
